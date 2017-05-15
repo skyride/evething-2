@@ -41,9 +41,9 @@ class ESI():
                 return None
 
         # ESI is buggy, so lets give it up to 10 retries for 500 error
-        if r.status_code == 500:
+        if r.status_code in [500, 502]:
             if retries < 10:
-                return self.get(url, data=data, method=method, retries=retries)
+                return self.request(url, data=data, method=method, retries=retries)
             else:
                 return None
 
@@ -51,8 +51,6 @@ class ESI():
         if r.status_code == 200:
             return json.loads(r.text)
         else:
-            print r.status_code
-            print r.text
             return None
 
 

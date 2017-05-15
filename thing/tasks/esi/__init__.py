@@ -1,0 +1,1 @@
+from characterinfo import *

@@ -39,3 +39,7 @@ from fixnames import FixNames
 from historyupdater import HistoryUpdater
 from priceupdater import PriceUpdater
 from fixcontracts import FixContracts
+
+################################
+# ESI
+from esi import *
