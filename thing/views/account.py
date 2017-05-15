@@ -88,7 +88,6 @@ def account(request):
             'characters': characters,
             'home_hide_characters': home_hide_characters,
             'themes': settings.THEMES,
-            'apikeys': APIKey.objects.filter(user=request.user).order_by('-valid', 'key_type', 'name'),
             'skillplans': SkillPlan.objects.filter(user=request.user),
             'visibilities': SkillPlan.VISIBILITY_CHOICES,
             'disable_password': getattr(settings, 'DISABLE_ACCOUNT_PASSWORD', False),
