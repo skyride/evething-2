@@ -30,8 +30,6 @@ import json
 
 from base64 import b64encode
 from cStringIO import StringIO
-from bravado.requests_client import RequestsClient
-from bravado.client import SwaggerClient
 
 try:
     import xml.etree.cElementTree as ET
@@ -131,6 +129,8 @@ def account_sso_callback(request):
         esi = ESIToken.objects.get(user=request.user, characterID=verify['CharacterID'])
         esi.access_token = token['access_token']
         esi.refresh_token = token['refresh_token']
+        esi.added = datetime.datetime.now()
+        esi.status = True
 
         request.session['message'] = "Updated access token for %s" % verify['CharacterName']
     else:
@@ -139,7 +139,6 @@ def account_sso_callback(request):
     esi.characterID = verify['CharacterID']
     esi.name = verify['CharacterName']
     esi.token_type = verify['TokenType']
-    esi.expires = verify['ExpiresOn']
     esi.save()
 
     return redirect('%s#connectedcharacters' % (reverse(account)))

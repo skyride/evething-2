@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 class ESIToken(models.Model):
     access_token = models.CharField(max_length=128)
     refresh_token = models.CharField(max_length=320)
-    expires = models.DateTimeField()
 
     user = models.ForeignKey(User)
     status = models.BooleanField(default=True)

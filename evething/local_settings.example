@@ -54,6 +54,8 @@ API_FAILURE_LIMIT = 3
 # ESI Details
 # When you create the ESI application at developers.eveonline.com you should
 # fill in this section
+ESI_URL = "https://esi.tech.ccp.is/latest"
+ESI_DATASOURCE = "tranquility"
 ESI_CLIENT_ID = ''
 ESI_SECRET_KEY = ''
 ESI_CALLBACK_URL = ''
