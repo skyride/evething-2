@@ -24,7 +24,14 @@
 # ------------------------------------------------------------------------------
 
 import gzip
+import urllib
+import requests
+import json
+
+from base64 import b64encode
 from cStringIO import StringIO
+from bravado.requests_client import RequestsClient
+from bravado.client import SwaggerClient
 
 try:
     import xml.etree.cElementTree as ET
@@ -34,7 +41,7 @@ except ImportError:
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.views.decorators.debug import sensitive_post_parameters, sensitive_variables
 from django.contrib.auth.forms import UserCreationForm
@@ -43,6 +50,8 @@ from core.util import get_minimum_keyid
 from thing.forms import UploadSkillPlanForm
 from thing.models import *  # NOPEP8
 from thing.stuff import *  # NOPEP8
+
+from evething import local_settings
 
 
 @login_required
@@ -60,6 +69,14 @@ def account(request):
     characters = Character.objects.filter(apikeys__user=request.user).distinct()
     home_hide_characters = set(int(c) for c in profile.home_hide_characters.split(',') if c)
 
+    sso_authorize_url = "https://login.eveonline.com/oauth/authorize/?type=%s&response_type=%s&redirect_uri=%s&client_id=%s&scope=%s" % (\
+        "web_server",
+        "code",
+        urllib.quote_plus("http://192.168.0.16:8080/account/sso/callback/"),
+        local_settings.ESI_CLIENT_ID,
+        urllib.quote_plus(" ".join(local_settings.ESI_SCOPES))
+    )
+
     return render_page(
         'thing/account.html',
         {
@@ -74,11 +91,63 @@ def account(request):
             'apikeys': APIKey.objects.filter(user=request.user).order_by('-valid', 'key_type', 'name'),
             'skillplans': SkillPlan.objects.filter(user=request.user),
             'visibilities': SkillPlan.VISIBILITY_CHOICES,
-            'disable_password': getattr(settings, 'DISABLE_ACCOUNT_PASSWORD', False)
+            'disable_password': getattr(settings, 'DISABLE_ACCOUNT_PASSWORD', False),
+            'sso_authorize_url': sso_authorize_url,
+            'esi_tokens': ESIToken.objects.filter(user=request.user).order_by('-status', 'added')
         },
         request,
         [c.id for c in characters],
     )
+
+
+@login_required
+def account_sso_callback(request):
+    # Get the bearer key from CCP
+    code = request.GET.get("code")
+
+    auth = "Basic %s" % b64encode("%s:%s" % (local_settings.ESI_CLIENT_ID, local_settings.ESI_SECRET_KEY))
+    headers = { "Authorization": auth }
+    data = {
+        "grant_type": "authorization_code",
+        "code": code
+    }
+    r = requests.post("https://login.eveonline.com/oauth/token", data=data, headers=headers)
+    token = json.loads(r.text)
+
+    # Create the new token item
+    esi = ESIToken()
+    esi.user = request.user
+    esi.access_token = token['access_token']
+    esi.refresh_token = token['refresh_token']
+
+    # Get the character info from ESI
+    headers = { "Authorization": "Bearer %s" % esi.access_token }
+    r = requests.get("https://login.eveonline.com/oauth/verify", headers=headers)
+    verify = json.loads(r.text)
+
+    # Check if the character is already added
+    if ESIToken.objects.filter(user=request.user, characterID=verify['CharacterID']).count() > 0:
+        # Update the existing character object
+        esi = ESIToken.objects.get(user=request.user, characterID=verify['CharacterID'])
+        esi.access_token = token['access_token']
+        esi.refresh_token = token['refresh_token']
+
+    esi.characterID = verify['CharacterID']
+    esi.name = verify['CharacterName']
+    esi.token_type = verify['TokenType']
+    esi.expires = verify['ExpiresOn']
+    esi.save()
+
+    return redirect('%s#connectedcharacters' % (reverse(account)))
+
+
+@login_required
+def account_sso_delete(request):
+    # Delete the key if it exists and is owned by this user
+    id = request.GET.get("id")
+    ESIToken.objects.filter(id=id, user=request.user).delete()
+    return redirect('%s#connectedcharacters' % (reverse(account)))
+
 
 
 @sensitive_post_parameters()

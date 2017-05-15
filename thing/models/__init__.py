@@ -25,6 +25,9 @@ from thing.models.blueprint import Blueprint
 from thing.models.skill import Skill
 from thing.models.implant import Implant
 
+# ESI
+from thing.models.esitoken import ESIToken
+
 # Everything else
 from thing.models.apikey import APIKey
 from thing.models.apikeyfailure import APIKeyFailure
