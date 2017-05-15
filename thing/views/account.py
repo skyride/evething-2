@@ -125,12 +125,17 @@ def account_sso_callback(request):
     r = requests.get("https://login.eveonline.com/oauth/verify", headers=headers)
     verify = json.loads(r.text)
 
+    request.session['message_type'] = 'success'
     # Check if the character is already added
     if ESIToken.objects.filter(user=request.user, characterID=verify['CharacterID']).count() > 0:
         # Update the existing character object
         esi = ESIToken.objects.get(user=request.user, characterID=verify['CharacterID'])
         esi.access_token = token['access_token']
         esi.refresh_token = token['refresh_token']
+
+        request.session['message'] = "Updated access token for %s" % verify['CharacterName']
+    else:
+        request.session['message'] = "Connected new charcter %s" % verify['CharacterName']
 
     esi.characterID = verify['CharacterID']
     esi.name = verify['CharacterName']
@@ -145,7 +150,10 @@ def account_sso_callback(request):
 def account_sso_delete(request):
     # Delete the key if it exists and is owned by this user
     id = request.GET.get("id")
-    ESIToken.objects.filter(id=id, user=request.user).delete()
+    token = ESIToken.objects.get(id=id, user=request.user)
+    request.session['message_type'] = 'success'
+    request.session['message'] = "Disconnected character %s" % token.name
+    token.delete()
     return redirect('%s#connectedcharacters' % (reverse(account)))
 
 
