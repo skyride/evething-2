@@ -66,9 +66,8 @@ def home(request):
     # Not cached, fetch from database and cache
     if characters is None:
         character_qs = Character.objects.filter(
-            apikeys__user=request.user,
-            apikeys__valid=True,
-            apikeys__key_type__in=(APIKey.ACCOUNT_TYPE, APIKey.CHARACTER_TYPE),
+            esitoken__user=request.user,
+            esitoken__status=True,
         ).prefetch_related(
             'apikeys',
         ).select_related(
@@ -112,7 +111,8 @@ def home(request):
         api_keys.update(char_keys)
 
         chars[character.id] = character
-        character.z_apikey = char_keys[0]
+        #character.z_apikey = char_keys[0]
+        character.z_apikey = ""
         character.z_training = {}
 
         total_balance += character.details.wallet_balance
@@ -189,7 +189,7 @@ def home(request):
         char.z_notifications = []
 
         # Game time warnings
-        if char.z_apikey.paid_until:
+        """if char.z_apikey.paid_until:
             timediff = total_seconds(char.z_apikey.paid_until - now)
 
             if timediff < 0:
@@ -206,17 +206,17 @@ def home(request):
                     'text': shortduration(timediff),
                     'tooltip': 'Remaining game time is low!',
                     'span_class': 'low-game-time',
-                })
+                })"""
 
         # API key warnings
-        if char.z_apikey.expires:
+        """if char.z_apikey.expires:
             timediff = total_seconds(char.z_apikey.expires - now)
             if timediff < EXPIRE_WARNING:
                 char.z_notifications.append({
                     'icon': 'key',
                     'text': shortduration(timediff),
                     'tooltip': 'API key is close to expiring!',
-                })
+                })"""
 
         # Empty skill queue
         if char.z_apikey in not_training:
@@ -290,7 +290,8 @@ def home(request):
     elif profile.home_sort_order == 'corpname':
         temp = [(c.z_apikey.group_name or 'ZZZ', c.corporation.name.lower(), c.name.lower(), c) for c in char_list]
     elif profile.home_sort_order == 'totalsp':
-        temp = [(c.z_apikey.group_name or 'ZZZ', getattr(c, 'z_total_sp', 0), c) for c in char_list]
+        #temp = [(c.z_apikey.group_name or 'ZZZ', getattr(c, 'z_total_sp', 0), c) for c in char_list]
+        temp = [('ZZZ', getattr(c, 'z_total_sp', 0), c) for c in char_list]
     elif profile.home_sort_order == 'wallet':
         temp = [(c.z_apikey.group_name or 'ZZZ', c.details and c.details.wallet_balance, c.name.lower(), c) for c in char_list]
 

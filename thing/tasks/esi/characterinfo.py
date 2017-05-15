@@ -47,7 +47,8 @@ class ESI_CharacterInfo(APITask):
         ship = self.api.get("/characters/$id/ship/")
 
         # Populate the database
-        charDetails.wallet_balance = (wallet for wallet in wallets if wallet['wallet_id'] == 1000).next()['balance']
+        balance = float((wallet for wallet in wallets if wallet['wallet_id'] == 1000).next()['balance']) / 100
+        charDetails.wallet_balance = balance
         # Lmao ESI doesn't have character attributes
         charDetails.cha_attribute = 1
         charDetails.int_attribute = 1
@@ -64,6 +65,8 @@ class ESI_CharacterInfo(APITask):
         character.save()
         charDetails.save()
         charConfig.save()
+        self.api.token.character = character
+        self.api.token.save()
 
 
     # Generates the last known location string

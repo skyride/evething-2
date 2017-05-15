@@ -67,7 +67,7 @@ def account(request):
     characters = Character.objects.filter(apikeys__user=request.user).distinct()
     home_hide_characters = set(int(c) for c in profile.home_hide_characters.split(',') if c)
 
-    sso_authorize_url = "https://login.eveonline.com/oauth/authorize/?type=%s&response_type=%s&redirect_uri=%s&client_id=%s&scope=%s" % (\
+    sso_authorize_url = "https://login.eveonline.com/oauth/authorize?type=%s&response_type=%s&redirect_uri=%s&client_id=%s&scope=%s" % (\
         "web_server",
         "code",
         urllib.quote_plus("http://192.168.0.16:8080/account/sso/callback/"),
