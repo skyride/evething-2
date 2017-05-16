@@ -57,21 +57,25 @@ class ESI():
 
 
     # Takes an ESIToken object as the constructor
-    def __init__(self, token):
+    def __init__(self, token=None):
         self.token = token
 
 
     # Replaces url $variables with their values
     def _replacements(self, url):
-        url = url.replace("$id", str(self.token.characterID))
+        if self.token != None:
+            url = url.replace("$id", str(self.token.characterID))
 
         return url
 
 
     def _bearer_header(self):
-        headers = {
-            "Authorization": "Bearer %s" % self.token.access_token
-        }
+        if self.token == None:
+            headers = {}
+        else:
+            headers = {
+                "Authorization": "Bearer %s" % self.token.access_token
+            }
         return headers
 
 

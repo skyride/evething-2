@@ -4,7 +4,7 @@ from .apitask import APITask
 
 from thing.esi import ESI
 from thing.models import Character, CharacterConfig, CharacterDetails, Item, System, Station, \
-                         CharacterSkill, SkillQueue
+                         CharacterSkill, SkillQueue, Corporation
 
 # This task effectively replaces the characterInfo and characterSheet calls
 class ESI_CharacterInfo(APITask):
@@ -30,6 +30,7 @@ class ESI_CharacterInfo(APITask):
             character = Character()
             character.id = characterID
         character.name = public['name']
+        character.corporation = Corporation.get_or_create(public['corporation_id'])
 
         # Get or create the detail/config objects
         try:

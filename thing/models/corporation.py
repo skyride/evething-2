@@ -54,6 +54,22 @@ class Corporation(models.Model):
     def get_total_balance(self):
         return self.corpwallet_set.aggregate(Sum('balance'))['balance_sum']
 
+
+    @staticmethod
+    def get_or_create(corporation_id):
+        from thing.esi import ESI
+
+        corporation = Corporation.objects.filter(id=corporation_id)
+        if len(corporation) == 0:
+            api = ESI()
+            corporation = api.get("/corporations/%s/" % corporation_id)
+            corporation = Corporation(id=corporation_id, name=corporation['corporation_name'])
+            corporation.save()
+            return corporation
+        else:
+            return corporation[0]
+
+
     @staticmethod
     def get_ids_with_access(user, access_mask):
         from thing.models.apikey import APIKey
