@@ -4,7 +4,8 @@ from .apitask import APITask
 
 from thing.esi import ESI
 from thing.models import Character, CharacterConfig, CharacterDetails, Item, System, Station, \
-                         CharacterSkill, SkillQueue, Corporation
+                         CharacterSkill, SkillQueue, Corporation, Faction, FactionStanding, \
+                         CorporationStanding
 
 # This task effectively replaces the characterInfo and characterSheet calls
 class ESI_CharacterInfo(APITask):
@@ -107,6 +108,24 @@ class ESI_CharacterInfo(APITask):
         except KeyError:
             # This character isn't training, wipe the queue
             SkillQueue.objects.filter(character=character).delete()
+
+
+        ## Standings
+        standings = self.api.get("/characters/$id/standings/")
+
+        factions = filter(lambda x: x['from_type'] == "faction", standings)
+        for faction in factions:
+            factionstanding = FactionStanding.objects.filter(character=character, faction_id=faction['from_id'])
+            if len(factionstanding) == 1:
+                factionstanding = factionstanding[0]
+            else:
+                factionstanding = FactionStanding(character=character, faction_id=faction['from_id'])
+
+            factionstanding.standing = faction['standing']
+            factionstanding.save()
+
+        npccorps = filter(lambda x: x['from_type'] == "npc_corp", standings)
+
 
 
     # Generates the last known location string

@@ -1,9 +1,11 @@
+import json
+
 from thing.esi import ESI
 from thing.models.esitoken import ESIToken
 from thing.tasks import ESI_CharacterInfo
 
 token = ESIToken.objects.get(name="Capri Sun KraftFoods")
-#api = ESI(token)
+api = ESI(token)
 #api._refresh_access_token()
 #print api.get("/characters/93417038/assets/")
 #print api.get("/characters/93637573/assets/")
@@ -16,3 +18,5 @@ task.run(token.id)
 """for token in ESIToken.objects.all():
     print token.name
     task.run(token.id)"""
+
+#print json.dumps(api.get("/characters/$id/standings/"))
