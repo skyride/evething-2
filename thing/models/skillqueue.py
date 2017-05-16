@@ -53,14 +53,19 @@ class SkillQueue(models.Model):
             self.end_sp, self.start_time, self.end_time
         )
 
-    def get_complete_percentage(self, now=None, character=None):
+    def get_complete_percentage(self, now=None, character=None, rounded=True):
         if now is None:
             now = datetime.datetime.utcnow()
         remaining = total_seconds(self.end_time - now)
         remain_sp = remaining / 60.0 * self.get_sp_per_minute()
         required_sp = self.skill.get_sp_at_level(self.to_level) - self.skill.get_sp_at_level(self.to_level - 1)
 
-        return round(100 - (remain_sp / required_sp * 100), 1)
+        percentage = 100 - (remain_sp / required_sp * 100)
+
+        if rounded:
+            return round(percentage, 1)
+        else:
+            return percentage
 
 
     def get_sp_per_minute(self):
@@ -78,7 +83,7 @@ class SkillQueue(models.Model):
 
 
     def get_completed_sp(self, charskill, now=None, character=None):
-        if now is None:
+        """if now is None:
             now = datetime.datetime.utcnow()
 
         remaining = total_seconds(self.end_time - now)
@@ -88,7 +93,11 @@ class SkillQueue(models.Model):
         base_sp = self.skill.get_sp_at_level(charskill.level)
         current_sp = charskill.points
 
-        return (required_sp - remain_sp) - (current_sp - base_sp)
+        return (required_sp - remain_sp) - (current_sp - base_sp)"""
+
+        completed_sp = self.skill.get_sp_at_level(self.to_level) - self.skill.get_sp_at_level(self.to_level-1)
+        completed_sp = float(completed_sp) * (self.get_complete_percentage(rounded=False) / 100)
+        return completed_sp
 
     def get_roman_level(self):
         return ['', 'I', 'II', 'III', 'IV', 'V'][self.to_level]
