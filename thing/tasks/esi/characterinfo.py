@@ -76,7 +76,7 @@ class ESI_CharacterInfo(APITask):
         ## Skills
         skills = self.api.get("/characters/$id/skills/")
         for skill in skills['skills']:
-            db_skill = CharacterSkill.objects.filter(character=character, skill=skill['skill_id'])
+            db_skill = CharacterSkill.objects.filter(character=character, skill_id=skill['skill_id'])
             if len(db_skill) == 1:
                 db_skill = db_skill[0]
             else:
@@ -124,8 +124,16 @@ class ESI_CharacterInfo(APITask):
             factionstanding.standing = faction['standing']
             factionstanding.save()
 
-        npccorps = filter(lambda x: x['from_type'] == "npc_corp", standings)
+        npc_corps = filter(lambda x: x['from_type'] == "npc_corp", standings)
+        for npc_corp in npc_corps:
+            corpstanding = CorporationStanding.objects.filter(character=character, corporation_id=npc_corp['from_id'])
+            if len(corpstanding) == 1:
+                corpstanding = corpstanding[0]
+            else:
+                corpstanding = CorporationStanding(character=character, corporation_id=npc_corp['from_id'])
 
+            corpstanding.standing = npc_corp['standing']
+            corpstanding.save()
 
 
     # Generates the last known location string
