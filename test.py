@@ -11,4 +11,10 @@ token = ESIToken.objects.get(name="Capri Sun KraftFoods")
 #print api.post("/characters/$id/cspa/", data={"characters": [93637573]})
 
 task = ESI_CharacterInfo()
-task.run(token.id)
+#task.run(token.id)
+
+for token in ESIToken.objects.all():
+    print token.name
+    task.run(token.id)
+
+print "done"

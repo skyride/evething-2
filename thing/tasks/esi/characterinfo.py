@@ -85,19 +85,23 @@ class ESI_CharacterInfo(APITask):
             db_skill.save()
 
         queue = self.api.get("/characters/$id/skillqueue/")
-        for skill in queue:
-            db_skill = SkillQueue.objects.filter(character=character, skill=skill['skill_id'])
-            if len(db_skill) == 1:
-                db_skill = db_skill[0]
-            else:
-                db_skill = SkillQueue(character=character, skill_id=skill['skill_id'])
+        try:
+            for skill in queue:
+                db_skill = SkillQueue.objects.filter(character=character, skill=skill['skill_id'])
+                if len(db_skill) == 1:
+                    db_skill = db_skill[0]
+                else:
+                    db_skill = SkillQueue(character=character, skill_id=skill['skill_id'])
 
-            db_skill.start_time = self.parse_api_date(skill['start_date'])
-            db_skill.end_time = self.parse_api_date(skill['finish_date'])
-            db_skill.start_sp = skill['training_start_sp']
-            db_skill.end_sp = skill['level_end_sp']
-            db_skill.to_level = skill['finished_level']
-            db_skill.save()
+                db_skill.start_time = self.parse_api_date(skill['start_date'])
+                db_skill.end_time = self.parse_api_date(skill['finish_date'])
+                db_skill.start_sp = skill['training_start_sp']
+                db_skill.end_sp = skill['level_end_sp']
+                db_skill.to_level = skill['finished_level']
+                db_skill.save()
+        except KeyError:
+            # This character isn't training, wipe the queue
+            SkillQueue.objects.filter(character=character).delete()
 
 
     # Generates the last known location string
