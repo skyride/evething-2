@@ -57,10 +57,25 @@ class SkillQueue(models.Model):
         if now is None:
             now = datetime.datetime.utcnow()
         remaining = total_seconds(self.end_time - now)
-        remain_sp = remaining / 60.0 * self.skill.get_sp_per_minute(character or self.character)
+        remain_sp = remaining / 60.0 * self.get_sp_per_minute()
         required_sp = self.skill.get_sp_at_level(self.to_level) - self.skill.get_sp_at_level(self.to_level - 1)
 
         return round(100 - (remain_sp / required_sp * 100), 1)
+
+
+    def get_sp_per_minute(self):
+        start_time = float(self.start_time.strftime('%s'))
+        end_time = float(self.end_time.strftime('%s'))
+        duration = end_time - start_time
+
+        sp_to_train = self.end_sp - self.start_sp
+
+        return round(sp_to_train / (duration / 60), 1)
+
+
+    def get_sp_per_hour(self):
+        return self.get_sp_per_minute() * 60
+
 
     def get_completed_sp(self, charskill, now=None, character=None):
         if now is None:
