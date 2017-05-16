@@ -44,7 +44,7 @@ class ESI_CharacterInfo(APITask):
 
 
         # Perform the rest of the calls
-        clones = self.api.get("/characters/$id/clones/")
+        #clones = self.api.get("/characters/$id/clones/")
         location = self.api.get("/characters/$id/location/")
         ship = self.api.get("/characters/$id/ship/")
 
@@ -116,7 +116,8 @@ class ESI_CharacterInfo(APITask):
         if "structure_id" in location:
             try:
                 structure = self.api.get("/universe/structures/%s/" % location['structure_id'])
-                return structure['name']
+                str_type = Item.objects.get(id=structure['type_id'])
+                return "%s (%s)" % (structure['name'], str_type.name)
             except Exception:
                 return ""
 
