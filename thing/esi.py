@@ -17,20 +17,22 @@ class ESI():
 
 
     # Wrapper for GET
-    def get(self, url, data=None):
-        return self.request(url, data=data, method=requests.get)
+    def get(self, url, data=None, debug=True):
+        return self.request(url, data=data, method=requests.get, debug=debug)
 
     # Wrapper for POST
-    def post(self, url, data=None):
-        return self.request(url, data=data, method=requests.post)
+    def post(self, url, data=None, debug=False):
+        return self.request(url, data=data, method=requests.post, debug=debug)
 
 
-    def request(self, url, data=None, method=requests.get, retries=0):
+    def request(self, url, data=None, method=requests.get, retries=0, debug=False):
         # Do replacements
         full_url = self._replacements(url)
 
         # Try request
         full_url = "%s%s?datasource=%s" % (self.url, full_url, self.datasource)
+        if debug:
+            print full_url
         r = method(full_url, data=data, headers=self._bearer_header())
 
         # If we got a 403 error its an invalid token, try to refresh the token and try again
