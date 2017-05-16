@@ -100,6 +100,10 @@ class ESI_CharacterInfo(APITask):
                 db_skill.end_sp = skill['level_end_sp']
                 db_skill.to_level = skill['finished_level']
                 db_skill.save()
+
+            # Remove skills that are no longer in queue
+            queue_map = map(lambda x: x['skill_id'], queue)
+            SkillQueue.objects.filter(character=character).exclude(skill_id__in=queue_map).delete()
         except KeyError:
             # This character isn't training, wipe the queue
             SkillQueue.objects.filter(character=character).delete()
