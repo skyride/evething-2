@@ -41,14 +41,14 @@ from thing.stuff import *  # NOPEP8
 def character_sheet(request, character_name):
     """Display a character page"""
     characters = Character.objects.select_related('config', 'details', 'corporation__alliance')
-    characters = characters.filter(apikeys__valid=True)
+    characters = characters.filter(esitoken__status=True)
     characters = characters.distinct()
 
     char = get_object_or_404(characters, name=character_name)
 
     # Check access
     public = True
-    if request.user.is_authenticated() and char.apikeys.filter(user=request.user).count():
+    if request.user.is_authenticated() and char.esitoken.user == request.user:
         public = False
 
     # If it's for public access, make sure this character is visible

@@ -198,11 +198,12 @@
                   {% if show.wallet %}<li><strong>Wallet:</strong> {{ char.details.wallet_balance|commas }} ISK</li>{% endif %}
                 </ul>
                 <ul class="list-unstyled">
+                  <li><strong>Location:</strong> {{ char.details.last_known_location }}</li>
                   <li><strong>Total SP:</strong> {{ total_sp|commas }}</li>
                 </ul>
               </div>
               <div class="col-sm-7 col-md-8 pull-right">
-                <table class="attributes">
+                <!-- <table class="attributes">
                   <tr class="r">
                     <td><strong>Int:</strong></td>
                     <td>{{ char.details.int_attribute }}</td>
@@ -230,7 +231,7 @@
                   </tr>
                 </table>
                 <br>
-              </div>
+              </div>-->
             </div>
 
             {% if show.queue and queue -%}

@@ -3,7 +3,8 @@ import json
 from .apitask import APITask
 
 from thing.esi import ESI
-from thing.models import Character, CharacterConfig, CharacterDetails, Item, System, Station
+from thing.models import Character, CharacterConfig, CharacterDetails, Item, System, Station, \
+                         CharacterSkill
 
 # This task effectively replaces the characterInfo and characterSheet calls
 class ESI_CharacterInfo(APITask):
@@ -18,6 +19,7 @@ class ESI_CharacterInfo(APITask):
         if wallets == None:
             return None
 
+        ## Character Data
         characterID = self.api.token.characterID
         public = self.api.get("/characters/$id/")
 
@@ -67,6 +69,23 @@ class ESI_CharacterInfo(APITask):
         charConfig.save()
         self.api.token.character = character
         self.api.token.save()
+
+
+        ## Skills
+        skills = self.api.get("/characters/$id/skills/")
+        queue = self.api.get("/characters/$id/skillqueue/")
+
+        for skill in skills['skills']:
+            db_skill = CharacterSkill.objects.filter(character=character, skill=skill['skill_id'])
+            if len(db_skill) == 1:
+                db_skill = db_skill[0]
+            else:
+                db_skill = CharacterSkill(character=character, skill_id=skill['skill_id'])
+
+            db_skill.level = skill['current_skill_level']
+            db_skill.points = skill['skillpoints_in_skill']
+            db_skill.save()
+
 
 
     # Generates the last known location string
