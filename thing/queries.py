@@ -49,13 +49,10 @@ SELECT  mo.creator_character_id,
         COALESCE(SUM(mo.escrow), 0) AS total_escrow
 FROM    thing_marketorder mo,
         thing_character c,
-        thing_apikey_characters ac,
-        thing_apikey a
+        thing_esitoken e
 WHERE   mo.creator_character_id = c.id
-        AND c.id = ac.character_id
-        AND ac.apikey_id = a.id
-        AND a.corporation_id IS NULL
-        AND a.user_id = %s
+        AND e.character_id = c.id
+        AND e.user_id = %s
 GROUP BY mo.creator_character_id, c.name
 ORDER BY c.name
 """
