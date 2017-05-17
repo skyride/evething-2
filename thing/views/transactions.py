@@ -312,6 +312,7 @@ def transactions(request):
             'next': next,
             'prev': prev,
             'values': values,
+            'user': request.user,
         },
         request,
         character_ids,

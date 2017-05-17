@@ -70,7 +70,8 @@ def pi(request):
     out = render_page(
         'thing/pi.html',
         {
-            'map': pi_map
+            'map': pi_map,
+            'user': request.user
         },
         request,
     )

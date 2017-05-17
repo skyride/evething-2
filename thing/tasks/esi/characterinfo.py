@@ -1,6 +1,7 @@
 import json
 
 from django.db import transaction
+from django.db.models import Sum, F, FloatField
 
 from .apitask import APITask
 
@@ -8,7 +9,7 @@ from thing.personallocationflagenum import PersonalLocationFlagEnum
 from thing.esi import ESI
 from thing.models import Character, CharacterConfig, CharacterDetails, Item, System, Station, \
                          CharacterSkill, SkillQueue, Corporation, Faction, FactionStanding, \
-                         CorporationStanding, Asset, System, InventoryFlag
+                         CorporationStanding, Asset, System, InventoryFlag, AssetSummary
 
 # This task effectively replaces the characterInfo and characterSheet calls
 class ESI_CharacterInfo(APITask):
@@ -186,6 +187,28 @@ class ESI_CharacterInfo(APITask):
 
         # Delete all assets not in the map
         Asset.objects.filter(character=character).exclude(asset_id__in=asset_map).delete()
+
+        # Rebuild asset summary
+        AssetSummary.objects.filter(character=character).delete()
+        summaries = Station.objects.filter(asset__character=character).annotate(
+                total_items=Sum("asset__quantity"),
+                total_volume=Sum(
+                    F('asset__quantity') * F('asset__item__volume'), output_field=FloatField()
+                ),
+                total_value=Sum(
+                    F('asset__quantity') * F('asset__item__sell_price'), output_field=FloatField()
+                )
+        )
+        for summary in summaries:
+            db_summary = AssetSummary(
+                character=character,
+                system_id=summary.system_id,
+                station_id=summary.id,
+                total_items=summary.total_items,
+                total_volume=summary.total_volume,
+                total_value=summary.total_value
+            )
+            db_summary.save()
 
 
 

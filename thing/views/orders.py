@@ -122,6 +122,7 @@ def orders(request):
             'char_orders': char_orders,
             'orders': orders,
             'total_row': total_row,
+            'user': request.user
         },
         request,
     )

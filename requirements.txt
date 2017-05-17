@@ -16,10 +16,11 @@ celery==3.1.25
 constantly==15.1.0
 crochet==1.6.0
 django-mptt==0.7.4
+enum34==1.1.6
 fido==4.1.0
 functools32==3.2.3-2
 incremental==16.10.1
-jingo==0.7.1
+jingo==0.9.0
 jsonschema==2.6.0
 kombu==3.0.37
 mysql==0.0.1

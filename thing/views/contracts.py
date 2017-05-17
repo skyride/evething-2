@@ -118,6 +118,7 @@ def contracts(request):
             char_map=char_map,
             corp_map=corp_map,
             alliance_map=alliance_map,
+            user=request.user
         ),
         request,
         character_ids,

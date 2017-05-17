@@ -84,6 +84,7 @@ def blueprints(request):
             'blueprints': Blueprint.objects.all(),
             'bpis': bpis,
             'runs': runs,
+            'user': request.user
         },
         request,
     )
@@ -135,6 +136,7 @@ def blueprints_export(request):
         'thing/blueprints_export.html',
         {
             'bpis': BlueprintInstance.objects.select_related().filter(user=request.user.id),
+            'user': request.user
         },
         request,
     )
@@ -208,6 +210,7 @@ def blueprints_import(request):
             'message': message,
             'message_type': message_type,
             'csv': csvdata,
+            'user': request.user
         },
         request,
     )
@@ -351,6 +354,7 @@ def bpcalc(request):
             'components': component_list,
             'comp_totals': comp_totals,
             'days': days,
+            'user': request.user
         },
         request,
     )

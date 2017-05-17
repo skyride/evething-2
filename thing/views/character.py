@@ -242,6 +242,7 @@ def character_common(request, char, public=True, anonymous=False):
             'public_plans': public_plans,
             'faction_standings': faction_standings,
             'corp_standings': corp_standings,
+            'user': request.user
         },
         request,
     )
@@ -510,6 +511,7 @@ def character_skillplan_common(request, character, skillplan, public=True, anony
             'skillplan': skillplan,
             'entries': entries,
             'total_remaining': total_remaining,
+            'user': request.user
         },
         request,
     )

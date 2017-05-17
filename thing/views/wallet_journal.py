@@ -235,6 +235,7 @@ def wallet_journal(request):
             'prev': prev,
             'ignoreself': 'ignoreself' in request.GET,
             'group_by': {},
+            'user': request.user,
         },
         request,
         character_ids,
@@ -328,6 +329,7 @@ def wallet_journal_aggregate(request):
             'agg_data': wja.data,
             'group_by': group_by,
             'empty_colspan': empty_colspan,
+            'user': request.user,
         },
         request,
     )

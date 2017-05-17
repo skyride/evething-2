@@ -59,6 +59,7 @@ def events(request):
         'thing/events.html',
         {
             'events': events,
+            'user': request.user
         },
         request,
     )

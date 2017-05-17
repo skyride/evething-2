@@ -48,6 +48,7 @@ def mail(request):
         'thing/mail.html',
         dict(
             characters=characters,
+            user=request.user
         ),
         request,
         [c[0] for c in characters],

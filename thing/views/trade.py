@@ -42,7 +42,9 @@ MONTHS = (None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 @login_required
 def trade(request):
     """Trade volume overview"""
-    data = {}
+    data = {
+        'user': request.user,
+    }
     # now = datetime.datetime.now()
 
     # Order information

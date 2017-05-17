@@ -366,6 +366,7 @@ def home(request):
             'characters': char_lists,
             'events': list(Event.objects.filter(user=request.user)[:10]),
             'ship_map': ship_map,
+            'user': request.user
             # 'task_count': task_count,
         },
         request,

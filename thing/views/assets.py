@@ -168,6 +168,7 @@ def assets_summary(request):
             'totals_list': totals_list,
             'total_data': total_data,
             'summary_list': summary_list,
+            'user': request.user
         },
         request,
         character_ids,
@@ -483,6 +484,7 @@ def assets_filter(request):
             'total_value': total_value,
             'systems': sorted_systems,
             'loc_totals': loc_totals,
+            'user': request.user
         },
         request,
         character_ids,

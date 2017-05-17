@@ -67,14 +67,6 @@ def account(request):
     characters = Character.objects.filter(apikeys__user=request.user).distinct()
     home_hide_characters = set(int(c) for c in profile.home_hide_characters.split(',') if c)
 
-    sso_authorize_url = "https://login.eveonline.com/oauth/authorize?type=%s&response_type=%s&redirect_uri=%s&client_id=%s&scope=%s" % (\
-        "web_server",
-        "code",
-        urllib.quote_plus("http://192.168.0.16:8080/account/sso/callback/"),
-        local_settings.ESI_CLIENT_ID,
-        urllib.quote_plus(" ".join(local_settings.ESI_SCOPES))
-    )
-
     return render_page(
         'thing/account.html',
         {
@@ -89,8 +81,8 @@ def account(request):
             'skillplans': SkillPlan.objects.filter(user=request.user),
             'visibilities': SkillPlan.VISIBILITY_CHOICES,
             'disable_password': getattr(settings, 'DISABLE_ACCOUNT_PASSWORD', False),
-            'sso_authorize_url': sso_authorize_url,
-            'esi_tokens': ESIToken.objects.filter(user=request.user).order_by('-status', 'added')
+            'esi_tokens': ESIToken.objects.filter(user=request.user).order_by('-status', 'added'),
+            'user': request.user
         },
         request,
         [c.id for c in characters],
@@ -98,8 +90,24 @@ def account(request):
 
 
 @login_required
+def account_sso_authorize(request):
+    return redirect(reverse(account_sso_callback))
+
+
+@login_required
 def account_sso_callback(request):
     # Get the bearer key from CCP
+    if "code" not in request.GET:
+        sso_authorize_url = "https://login.eveonline.com/oauth/authorize?type=%s&response_type=%s&redirect_uri=%s&client_id=%s&scope=%s&scope=%s" % (\
+            "web_server",
+            "code",
+            urllib.quote_plus(local_settings.ESI_CALLBACK_URL),
+            local_settings.ESI_CLIENT_ID,
+            urllib.quote_plus(" ".join(local_settings.ESI_SCOPES)),
+            "urgaypwned"
+        )
+        return redirect(sso_authorize_url)
+
     code = request.GET.get("code")
 
     auth = "Basic %s" % b64encode("%s:%s" % (local_settings.ESI_CLIENT_ID, local_settings.ESI_SECRET_KEY))
