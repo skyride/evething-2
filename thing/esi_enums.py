@@ -1,5 +1,14 @@
 from enum import Enum
 
+class IndustryJobStatusEnum(Enum):
+    active = 1
+    paused = 2
+    ready = 3
+    delivered = 104
+    cancelled = 102
+    reverted = 999
+    
+
 class PersonalLocationFlagEnum(Enum):
     AutoFit = 0
     Wardrobe = 3

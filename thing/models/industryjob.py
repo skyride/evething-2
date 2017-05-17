@@ -36,6 +36,7 @@ class IndustryJob(models.Model):
     """Industry job"""
     ACTIVE_STATUS = 1
     PAUSED_STATUS = 2
+    READY_STATUS = 3
     CANCELLED_STATUS = 102
     DELIVERED_STATUS = 104
     FAILED_STATUS = 105
@@ -43,6 +44,7 @@ class IndustryJob(models.Model):
     STATUS_CHOICES = (
         (ACTIVE_STATUS, 'Active'),
         (PAUSED_STATUS, 'Paused (Facility Offline)'),
+        (READY_STATUS, 'Ready'),
         (CANCELLED_STATUS, 'Cancelled'),
         (DELIVERED_STATUS, 'Delivered'),
         (FAILED_STATUS, 'Failed'),

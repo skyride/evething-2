@@ -1,15 +1,18 @@
 import json
 
+from datetime import datetime
+
 from django.db import transaction
 from django.db.models import Sum, F, FloatField
 
 from .apitask import APITask
 
-from thing.personallocationflagenum import PersonalLocationFlagEnum
+from thing.esi_enums import *
 from thing.esi import ESI
 from thing.models import Character, CharacterConfig, CharacterDetails, Item, System, Station, \
                          CharacterSkill, SkillQueue, Corporation, Faction, FactionStanding, \
-                         CorporationStanding, Asset, System, InventoryFlag, AssetSummary
+                         CorporationStanding, Asset, System, InventoryFlag, AssetSummary, \
+                         IndustryJob
 
 # This task effectively replaces the characterInfo and characterSheet calls
 class ESI_CharacterInfo(APITask):
@@ -211,7 +214,6 @@ class ESI_CharacterInfo(APITask):
             db_summary.save()
 
 
-
         ## Standings
         standings = self.api.get("/characters/$id/standings/")
         factions = filter(lambda x: x['from_type'] == "faction", standings)
@@ -235,6 +237,48 @@ class ESI_CharacterInfo(APITask):
 
             corpstanding.standing = npc_corp['standing']
             corpstanding.save()
+
+
+        ## Industry
+        jobs = self.api.get("/characters/$id/industry/jobs/")
+        for job in jobs:
+            db_job = IndustryJob.objects.filter(job_id=job['job_id'])
+            if len(db_job) == 1:
+                db_job = db_job[0]
+            else:
+                db_job = IndustryJob(
+                    job_id=job['job_id'],
+                    installer_id=job['installer_id'],
+                    activity=job['activity_id'],
+                    output_location_id=job['output_location_id'],
+                    runs=job['runs'],
+                    team_id=0,  # This doesn't exist anymore so it's not in ESI
+                    licensed_runs=job['licensed_runs'],
+                    duration=job['duration'],
+                    start_date=self.parse_api_date(job['start_date']),
+                    end_date=self.parse_api_date(job['end_date']),
+                    pause_date=datetime(0001, 1, 1, 1, 0),
+                    completed_date=datetime(0001, 1, 1, 1, 0),
+                    blueprint_id=job['blueprint_type_id'],
+                    character=character,
+                    corporation=None,
+                    product_id=job['product_type_id'],
+
+                    # POSes are getting removed soon so we're just going to
+                    # assume the facility is a station/structure
+                    system_id=Station.get_or_create(job['facility_id'], self.api).system_id
+                )
+
+            # Update other values
+            db_job.status = IndustryJobStatusEnum[job['status']].value
+
+            if "completed_date" in job:
+                db_job.completed_date = self.parse_api_date(job['completed_date'])
+            if "pause_date" in job:
+                db_job.pause_date = self.parse_api_date(job['pause_date'])
+
+            db_job.save()
+
 
 
     # Generates the last known location string

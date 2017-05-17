@@ -37,9 +37,8 @@ def industry(request):
 
     # Fetch valid characters/corporations for this user
     characters = Character.objects.filter(
-        apikeys__user=request.user,
-        apikeys__valid=True,
-        apikeys__key_type__in=[APIKey.ACCOUNT_TYPE, APIKey.CHARACTER_TYPE]
+        esitoken__user=request.user,
+        esitoken__status=True,
     ).distinct()
     character_ids = [c.id for c in characters]
 
