@@ -1,6 +1,6 @@
 import json
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.db import transaction
 from django.db.models import Sum, F, FloatField
@@ -12,7 +12,7 @@ from thing.esi import ESI
 from thing.models import Character, CharacterConfig, CharacterDetails, Item, System, Station, \
                          CharacterSkill, SkillQueue, Corporation, Faction, FactionStanding, \
                          CorporationStanding, Asset, System, InventoryFlag, AssetSummary, \
-                         IndustryJob
+                         IndustryJob, MarketOrder
 
 # This task effectively replaces the characterInfo and characterSheet calls
 class ESI_CharacterInfo(APITask):
@@ -278,6 +278,34 @@ class ESI_CharacterInfo(APITask):
                 db_job.pause_date = self.parse_api_date(job['pause_date'])
 
             db_job.save()
+
+
+        ## Orders
+        orders = self.api.get("/characters/$id/orders/")
+        for order in orders:
+            db_order = MarketOrder.objects.filter(order_id=order['order_id'])
+            if len(db_order) == 1:
+                db_order = db_order[0]
+            else:
+                db_order = MarketOrder(
+                    order_id=order['order_id'],
+                    character=character,
+                    creator_character_id=character.id,
+                    escrow=order['escrow'],
+                    buy_order=order['is_buy_order'],
+                    volume_entered=order['volume_total'],
+                    corp_wallet_id=None,
+                    item_id=order['type_id'],
+                    station=Station.get_or_create(order['location_id'], self.api)
+                )
+
+            db_order.price = order['price']
+            db_order.total_price = order['price'] * order['volume_remain']
+            db_order.volume_remaining = order['volume_remain']
+            db_order.minimum_volume = order['min_volume']
+            db_order.issued = self.parse_api_date(order['issued'])
+            db_order.expires = db_order.issued + timedelta(days=order['duration'])
+            db_order.save()
 
 
 

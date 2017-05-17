@@ -4,7 +4,7 @@ from thing.esi import ESI
 from thing.models import *
 from thing.tasks import ESI_CharacterInfo
 
-token = ESIToken.objects.get(name="HiHi MeMe")
+token = ESIToken.objects.get(name="Tropicana Original NoPulp")
 api = ESI(token)
 #api._refresh_access_token()
 #print api.get("/characters/93417038/assets/")
