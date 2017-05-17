@@ -1,17 +1,21 @@
 import json
 
+from django.db import transaction
+
 from .apitask import APITask
 
+from thing.personallocationflagenum import PersonalLocationFlagEnum
 from thing.esi import ESI
 from thing.models import Character, CharacterConfig, CharacterDetails, Item, System, Station, \
                          CharacterSkill, SkillQueue, Corporation, Faction, FactionStanding, \
-                         CorporationStanding
+                         CorporationStanding, Asset, System, InventoryFlag
 
 # This task effectively replaces the characterInfo and characterSheet calls
 class ESI_CharacterInfo(APITask):
     name = "thing.esi.character_info"
     api = None
 
+    @transaction.atomic
     def run(self, token_id):
         self.api = self.get_api(token_id)
 
@@ -110,9 +114,83 @@ class ESI_CharacterInfo(APITask):
             SkillQueue.objects.filter(character=character).delete()
 
 
+        ## Assets
+        assets = self.api.get("/characters/$id/assets/")
+        asset_map = map(lambda x: x['item_id'], assets)
+
+        for asset in assets:
+            db_asset = Asset.objects.filter(asset_id=asset['item_id'])
+            if len(db_asset) == 1:
+                db_asset = db_asset[0]
+            else:
+                db_asset = Asset(character=character, asset_id=asset['item_id'], item_id=asset['type_id'])
+
+            # Names aren't in ESI atm for some reason
+            db_asset.name = ""
+            db_asset.inv_flag_id = PersonalLocationFlagEnum[asset['location_flag']].value
+
+            db_asset.singleton = asset['is_singleton']
+            if asset['is_singleton']:
+                db_asset.quantity = 1
+                db_asset.raw_quantity = -1
+            else:
+                db_asset.quantity = asset['quantity']
+                db_asset.raw_quantity = 0
+
+            # Calculate parent and location
+            # Try asset
+            if asset['location_id'] in asset_map:
+                db_asset.parent = asset['location_id']
+                db_asset.station = None
+                db_asset.system = None
+                db_asset.save()
+                continue
+            # Try station
+            if Station.get_or_create(asset['location_id'], self.api) != None:
+                station = Station.objects.get(id=asset['location_id'])
+                db_asset.station = station
+                db_asset.system_id = station.system_id
+                db_asset.save()
+                continue
+            # Try solar system
+            if System.objects.filter(id=asset['location_id']).count() > 0:
+                db_asset.station = None
+                db_asset.system_id = asset['location_id']
+                db_asset.save()
+                continue
+
+        # Fix station/system values for parented assets
+        def resolve_location(asset):
+            if asset.station == None:
+                #print "%s/%s" % (asset.parent, asset.asset_id)
+                parent = Asset.objects.get(asset_id=asset.parent)
+                if parent.station_id != None:
+                    asset.station_id = parent.station_id
+                    asset.system_id = parent.system_id
+                    asset.save()
+                    return (parent.station_id, parent.system_id)
+                else:
+                    station_id, system_id = resolve_location()
+                    asset.station_id = station_id
+                    asset.system_id = system_id
+                    asset.save()
+                    return (station_id, system_id)
+            else:
+                return None
+
+        for asset in Asset.objects.filter(character=character, station=None):
+            try:
+                resolve_location(asset)
+            except Exception:
+                pass
+
+        # Delete all assets not in the map
+        Asset.objects.filter(character=character).exclude(asset_id__in=asset_map).delete()
+
+
+
         ## Standings
         standings = self.api.get("/characters/$id/standings/")
-
         factions = filter(lambda x: x['from_type'] == "faction", standings)
         for faction in factions:
             factionstanding = FactionStanding.objects.filter(character=character, faction_id=faction['from_id'])

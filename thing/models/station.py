@@ -23,8 +23,11 @@
 # OF SUCH DAMAGE.
 # ------------------------------------------------------------------------------
 
+from datetime import datetime, timedelta
+
 from django.db import models
 
+from evething import local_settings
 from thing.models.system import System
 
 numeral_map = zip(
@@ -45,14 +48,56 @@ def roman_to_int(n):
 
 
 class Station(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=128)
     short_name = models.CharField(max_length=64, default='')
+    structure = models.BooleanField(default=False)
+    lastupdated = models.DateTimeField(auto_now=True)
 
     system = models.ForeignKey(System)
 
     class Meta:
         app_label = 'thing'
+
+
+    # Used to add structures
+    @staticmethod
+    def get_or_create(id, api):
+        # Check database for station/structure
+        station = Station.objects.filter(id=id)
+        if len(station) == 1:
+            station = station[0]
+            if not station.structure:
+                return station
+            else:
+                if station.lastupdated < datetime.now() - timedelta(days=2):
+                    # Update the structures name from the API
+                    try:
+                        r = api.get("/universe/structures/%s/" % station.id)
+                        station.name = r['name']
+                        station.system_id = r['solar_system_id']
+                        station.save()
+                    except Exception:
+                        # We failed to get it, probably because it's a structure
+                        # this token no longer has docking rights for
+                        pass
+
+                return station
+
+        try:
+            # It doesn't exist, lets create it
+            r = api.get("/universe/structures/%s/" % id)
+            station = Station(id=id)
+            station.name = r['name']
+            station.system_id = r['solar_system_id']
+            station.structure = True
+            station.save()
+
+            return station
+        except Exception:
+            # We crashed out, it must not be a structure
+            return None
+
 
     def __unicode__(self):
         return self.name
@@ -70,14 +115,18 @@ class Station(models.Model):
             self.short_name = self.name
         else:
             a_parts = parts[0].split()
-            # Change the roman annoyance to a proper digit
-            out.append('%s %s' % (a_parts[0], str(roman_to_int(a_parts[1]))))
+            try:
+                # Change the roman annoyance to a proper digit
+                out.append('%s %s' % (a_parts[0], str(roman_to_int(a_parts[1]))))
 
-            # Moooon
-            if parts[1].startswith('Moon') and len(parts) == 3:
-                out[0] = '%s-%s' % (out[0], parts[1][5:])
-                out.append(''.join(s[0] for s in parts[2].split()))
-            else:
+                # Moooon
+                if parts[1].startswith('Moon') and len(parts) == 3:
+                    out[0] = '%s-%s' % (out[0], parts[1][5:])
+                    out.append(''.join(s[0] for s in parts[2].split()))
+                else:
+                    out.append(''.join(s[0] for s in parts[1].split()))
+            except Exception:
+                out.append(a_parts[0])
                 out.append(''.join(s[0] for s in parts[1].split()))
 
             self.short_name = ' - '.join(out)
