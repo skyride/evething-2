@@ -54,9 +54,8 @@ def orders(request):
 
     # Retrieve trade skills that we're interested in
     order_cs = CharacterSkill.objects.filter(
-        character__apikeys__user=request.user,
-        skill__in=ORDER_SLOT_SKILLS,
-        character__apikeys__key_type__in=[APIKey.ACCOUNT_TYPE, APIKey.CHARACTER_TYPE]
+        character__esitoken__user=request.user,
+        skill__in=ORDER_SLOT_SKILLS
     )
     for cs in order_cs:
         char_id = cs.character_id
@@ -83,9 +82,8 @@ def orders(request):
 
     # Retrieve all orders
     character_ids = list(Character.objects.filter(
-        apikeys__user=request.user.id,
-        apikeys__valid=True,
-        apikeys__key_type__in=[APIKey.ACCOUNT_TYPE, APIKey.CHARACTER_TYPE]
+        esitoken__user=request.user.id,
+        esitoken__status=True
     ).distinct().values_list(
         'id',
         flat=True,
