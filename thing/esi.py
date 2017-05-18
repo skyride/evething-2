@@ -44,8 +44,8 @@ class ESI():
 
         # ESI is buggy, so lets give it up to 10 retries for 500 error
         if r.status_code in [500, 502]:
-            if retries < 10:
-                return self.request(url, data=data, method=method, retries=retries)
+            if retries < local_settings.ESI_RETRIES:
+                return self.request(url, data=data, method=method, retries=retries+1)
             else:
                 return None
 
