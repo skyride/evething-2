@@ -17,15 +17,15 @@ class ESI():
 
 
     # Wrapper for GET
-    def get(self, url, data=None, debug=True):
+    def get(self, url, data=None, debug=local_settings.DEBUG):
         return self.request(url, data=data, method=requests.get, debug=debug)
 
     # Wrapper for POST
-    def post(self, url, data=None, debug=False):
+    def post(self, url, data=None, debug=local_settings.DEBUG):
         return self.request(url, data=data, method=requests.post, debug=debug)
 
 
-    def request(self, url, data=None, method=requests.get, retries=0, debug=False):
+    def request(self, url, data=None, method=requests.get, retries=0, debug=local_settings.DEBUG):
         # Do replacements
         full_url = self._replacements(url)
 

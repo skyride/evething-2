@@ -44,6 +44,7 @@ from thing.models.contract import Contract
 from thing.models.contractitem import ContractItem
 from thing.models.corporationstanding import CorporationStanding
 from thing.models.corpwallet import CorpWallet
+from thing.models.clone import Clone
 from thing.models.event import Event
 from thing.models.factionstanding import FactionStanding
 from thing.models.industryjob import IndustryJob
