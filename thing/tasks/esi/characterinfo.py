@@ -12,7 +12,7 @@ from thing.esi import ESI
 from thing.models import Character, CharacterConfig, CharacterDetails, Item, System, Station, \
                          CharacterSkill, SkillQueue, Corporation, Faction, FactionStanding, \
                          CorporationStanding, Asset, System, InventoryFlag, AssetSummary, \
-                         IndustryJob, MarketOrder
+                         IndustryJob, MarketOrder, Clone, CloneImplant
 
 # This task effectively replaces the characterInfo and characterSheet calls
 class ESI_CharacterInfo(APITask):
@@ -306,6 +306,27 @@ class ESI_CharacterInfo(APITask):
             db_order.issued = self.parse_api_date(order['issued'])
             db_order.expires = db_order.issued + timedelta(days=order['duration'])
             db_order.save()
+
+
+        ## Clones
+        clones = self.api.get("/characters/$id/clones/")
+        # Delete existing clones
+        Clone.objects.filter(character=character).delete()
+        if "jump_clones" in clones:
+            for clone in clones['jump_clones']:
+                db_clone = Clone(
+                    character=character,
+                    location=Station.get_or_create(clone['location_id'], self.api)
+                )
+                db_clone.save()
+
+                if "implants" in clone:
+                    for implant_id in clone['implants']:
+                        db_implant = CloneImplant(
+                            clone=db_clone,
+                            item_id=implant_id
+                        )
+                        db_implant.save()
 
 
 
