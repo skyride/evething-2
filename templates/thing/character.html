@@ -267,6 +267,7 @@
 
             <ul class="nav nav-tabs" id="tabs">
               <li class="active"><a href="#tab_skills" data-toggle="tab">Skills</a></li>
+              {% if char.clones.all()|length > 0 %}<li><a href="#tab_clones" data-toggle="tab">Jump Clones</a></li>{% endif %}
               {% if show.standings %}<li><a href="#tab_standings" data-toggle="tab">Standings</a></li>{% endif %}
             </ul>
             <br/>
@@ -298,6 +299,54 @@
                 </table>
                 {%- endfor %}
               </div>
+
+              {% if char.clones.all()|length > 0 %}
+              <div class="tab-pane" id="tab_clones">
+                <div class="row">
+                  <div class="col-sm-12">
+                    <p>
+                      <strong>Clone Slots Used:</strong> {{ char.clones.all()|length }}/{{ char.get_jc_slots() }}
+                    </p>
+                  </div>
+
+                  {% for clone in char.clones.all() %}
+                  <div class="col-xs-12 col-sm-12 col-lg-12">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        {{ clone.location.name }}
+                      </div>
+
+                      <div class="panel-body>">
+                        <table class="table table-stripled table-condensed table-hover" style="margin-bottom: 0;">
+                          <tbody>
+                          {% if clone.implants.all()|length > 0 %}
+                            {% for implant in clone.implants.all() %}
+                              <tr>
+                                <td class="col-sm-1"><img src="//image.eveonline.com/Type/{{ implant.item_id }}_32.png" /></td>
+                                <td>{{ implant.item.name }}</td>
+                                <td class="col-sm-2 col-xs-3" style="vertical-align: middle;">{{ implant.item.sell_price|commas }}</td>
+                              </tr>
+                            {% endfor %}
+                            <tr>
+                              <td></td>
+                              <td></td>
+                              <td><strong>{{ clone.get_implants_value()|commas }}</strong></td>
+                            </tr>
+                          {% else %}
+                            <tr>
+                              <td class="col-sm-1">&nbsp;</td>
+                              <td><i>No Implants</i></td>
+                            </tr>
+                          {% endif %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endif %}
 
               {% if show.standings %}
               <div class="tab-pane" id="tab_standings">

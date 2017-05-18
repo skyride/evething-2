@@ -25,6 +25,7 @@
 
 from django.db import models
 from django.db.models import Sum
+from django.db.models.functions import Coalesce
 
 from thing.models.corporation import Corporation
 
@@ -45,6 +46,12 @@ class Character(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('character', (), {'character_name': self.name, })
+
+    def get_jc_slots(self):
+        return self.skills.filter(skill_id__in=[24242, 33407]).\
+            aggregate(
+                jc_slots=Coalesce(Sum('level'), 0)
+            )['jc_slots']
 
     def get_total_skill_points(self):
         from thing.models.characterskill import CharacterSkill
