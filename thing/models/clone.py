@@ -12,4 +12,4 @@ class Clone(models.Model):
 
 
     def get_implants_value(self):
-        return self.implants.aggregate(total=Sum('item__sell_price'))['total']
+        return self.implants.aggregate(total=Sum('implant__item__sell_price'))['total']

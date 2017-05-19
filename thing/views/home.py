@@ -283,9 +283,9 @@ def home(request):
 
     # Decorate/sort based on settings, ugh
     char_list = chars.values()
-    if profile.home_sort_order == 'apiname':
-        temp = [(c.z_apikey.group_name or 'ZZZ', c.z_apikey.name, c.name.lower(), c) for c in char_list]
-    elif profile.home_sort_order == 'charname':
+    #if profile.home_sort_order == 'apiname':
+        #temp = [(c.z_apikey.group_name or 'ZZZ', c.z_apikey.name, c.name.lower(), c) for c in char_list]
+    if profile.home_sort_order == 'charname':
         temp = [(c.z_apikey.group_name or 'ZZZ', c.name.lower(), c) for c in char_list]
     elif profile.home_sort_order == 'corpname':
         temp = [(c.z_apikey.group_name or 'ZZZ', c.corporation.name.lower(), c.name.lower(), c) for c in char_list]

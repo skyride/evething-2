@@ -7,13 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('thing', '0005_cloneimplant'),
+        ('thing', '0001_initial'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='clone',
-            name='location',
-            field=models.ForeignKey(to='thing.Station', null=True),
+            model_name='blueprintproduct',
+            name='item',
+            field=models.ForeignKey(to='thing.Item', db_constraint=False),
         ),
     ]

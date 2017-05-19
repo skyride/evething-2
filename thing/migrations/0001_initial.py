@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
 import mptt.fields
 import datetime
 from django.conf import settings
@@ -21,9 +21,6 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=64)),
                 ('short_name', models.CharField(max_length=5)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='APIKey',
@@ -46,7 +43,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('keyid',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='APIKeyFailure',
@@ -57,9 +53,6 @@ class Migration(migrations.Migration):
                 ('fail_reason', models.CharField(max_length=255)),
                 ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Asset',
@@ -73,9 +66,6 @@ class Migration(migrations.Migration):
                 ('raw_quantity', models.IntegerField()),
                 ('singleton', models.BooleanField(default=False)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='AssetSummary',
@@ -86,9 +76,6 @@ class Migration(migrations.Migration):
                 ('total_volume', models.DecimalField(max_digits=12, decimal_places=2)),
                 ('total_value', models.DecimalField(max_digits=18, decimal_places=2)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Blueprint',
@@ -100,7 +87,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('name',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='BlueprintComponent',
@@ -111,9 +97,6 @@ class Migration(migrations.Migration):
                 ('consumed', models.BooleanField(default=False)),
                 ('blueprint', models.ForeignKey(to='thing.Blueprint')),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='BlueprintInstance',
@@ -128,7 +111,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('blueprint',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='BlueprintProduct',
@@ -138,9 +120,6 @@ class Migration(migrations.Migration):
                 ('count', models.IntegerField()),
                 ('blueprint', models.ForeignKey(to='thing.Blueprint')),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Campaign',
@@ -154,7 +133,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('title',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Character',
@@ -165,40 +143,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('name',),
             },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='CharacterConfig',
-            fields=[
-                ('character', models.OneToOneField(related_name='config', primary_key=True, serialize=False, to='thing.Character')),
-                ('is_public', models.BooleanField(default=False)),
-                ('show_implants', models.BooleanField(default=False)),
-                ('show_skill_queue', models.BooleanField(default=False)),
-                ('show_standings', models.BooleanField(default=False)),
-                ('show_wallet', models.BooleanField(default=False)),
-                ('anon_key', models.CharField(default=b'', max_length=16)),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='CharacterDetails',
-            fields=[
-                ('character', models.OneToOneField(related_name='details', primary_key=True, serialize=False, to='thing.Character')),
-                ('wallet_balance', models.DecimalField(default=0, max_digits=18, decimal_places=2)),
-                ('cha_attribute', models.SmallIntegerField(default=20)),
-                ('int_attribute', models.SmallIntegerField(default=20)),
-                ('mem_attribute', models.SmallIntegerField(default=20)),
-                ('per_attribute', models.SmallIntegerField(default=20)),
-                ('wil_attribute', models.SmallIntegerField(default=19)),
-                ('security_status', models.DecimalField(default=0, max_digits=6, decimal_places=4)),
-                ('last_known_location', models.CharField(default=b'', max_length=255)),
-                ('ship_name', models.CharField(default=b'', max_length=128)),
-            ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='CharacterSkill',
@@ -206,11 +150,21 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('level', models.SmallIntegerField()),
                 ('points', models.IntegerField()),
-                ('character', models.ForeignKey(to='thing.Character')),
             ],
-            options={
-            },
-            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Clone',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('last_updated', models.DateTimeField(auto_now=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CloneImplant',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('clone', models.ForeignKey(related_name='implants', to='thing.Clone')),
+            ],
         ),
         migrations.CreateModel(
             name='Colony',
@@ -222,11 +176,7 @@ class Migration(migrations.Migration):
                 ('last_update', models.DateTimeField()),
                 ('level', models.IntegerField()),
                 ('pins', models.IntegerField()),
-                ('character', models.ForeignKey(to='thing.Character')),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Constellation',
@@ -237,7 +187,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('name',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Contract',
@@ -262,12 +211,10 @@ class Migration(migrations.Migration):
                 ('buyout', models.DecimalField(max_digits=15, decimal_places=2)),
                 ('volume', models.DecimalField(max_digits=16, decimal_places=4)),
                 ('retrieved_items', models.BooleanField(default=False)),
-                ('character', models.ForeignKey(to='thing.Character')),
             ],
             options={
                 'ordering': ('-date_issued',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='ContractItem',
@@ -279,9 +226,6 @@ class Migration(migrations.Migration):
                 ('singleton', models.BooleanField(default=False)),
                 ('included', models.BooleanField(default=False)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Corporation',
@@ -301,20 +245,16 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('name',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='CorporationStanding',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('standing', models.DecimalField(max_digits=4, decimal_places=2)),
-                ('character', models.ForeignKey(to='thing.Character')),
-                ('corporation', models.ForeignKey(to='thing.Corporation')),
             ],
             options={
                 'ordering': ('-standing',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='CorpWallet',
@@ -328,7 +268,20 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('corporation', 'account_id'),
             },
-            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ESIToken',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('access_token', models.CharField(max_length=128)),
+                ('refresh_token', models.CharField(max_length=320)),
+                ('status', models.BooleanField(default=True)),
+                ('added', models.DateTimeField(auto_now_add=True)),
+                ('token_type', models.CharField(max_length=32)),
+                ('characterID', models.IntegerField(default=None, null=True)),
+                ('corporationID', models.IntegerField(default=None, null=True)),
+                ('name', models.CharField(max_length=64)),
+            ],
         ),
         migrations.CreateModel(
             name='Event',
@@ -341,7 +294,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('-issued', '-id'),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Faction',
@@ -349,22 +301,16 @@ class Migration(migrations.Migration):
                 ('id', models.IntegerField(serialize=False, primary_key=True)),
                 ('name', models.CharField(max_length=64)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='FactionStanding',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('standing', models.DecimalField(max_digits=4, decimal_places=2)),
-                ('character', models.ForeignKey(to='thing.Character')),
-                ('faction', models.ForeignKey(to='thing.Faction')),
             ],
             options={
                 'ordering': ('-standing',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='IndustryJob',
@@ -377,20 +323,17 @@ class Migration(migrations.Migration):
                 ('runs', models.IntegerField()),
                 ('team_id', models.BigIntegerField()),
                 ('licensed_runs', models.IntegerField()),
-                ('status', models.IntegerField(choices=[(1, b'Active'), (2, b'Paused (Facility Offline)'), (102, b'Cancelled'), (104, b'Delivered'), (105, b'Failed'), (999, b'Unknown')])),
+                ('status', models.IntegerField(choices=[(1, b'Active'), (2, b'Paused (Facility Offline)'), (3, b'Ready'), (102, b'Cancelled'), (104, b'Delivered'), (105, b'Failed'), (999, b'Unknown')])),
                 ('duration', models.IntegerField()),
                 ('start_date', models.DateTimeField()),
                 ('end_date', models.DateTimeField()),
                 ('pause_date', models.DateTimeField()),
                 ('completed_date', models.DateTimeField()),
                 ('blueprint', models.ForeignKey(related_name='job_installed_blueprints', to='thing.Blueprint')),
-                ('character', models.ForeignKey(to='thing.Character')),
-                ('corporation', models.ForeignKey(blank=True, to='thing.Corporation', null=True)),
             ],
             options={
                 'ordering': ('-end_date',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='InventoryFlag',
@@ -399,9 +342,6 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=64)),
                 ('text', models.CharField(max_length=128)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Item',
@@ -414,25 +354,6 @@ class Migration(migrations.Migration):
                 ('sell_price', models.DecimalField(default=0, max_digits=15, decimal_places=2)),
                 ('buy_price', models.DecimalField(default=0, max_digits=15, decimal_places=2)),
             ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Implant',
-            fields=[
-                ('item', models.OneToOneField(primary_key=True, serialize=False, to='thing.Item')),
-                ('description', models.TextField()),
-                ('charisma_modifier', models.SmallIntegerField()),
-                ('intelligence_modifier', models.SmallIntegerField()),
-                ('memory_modifier', models.SmallIntegerField()),
-                ('perception_modifier', models.SmallIntegerField()),
-                ('willpower_modifier', models.SmallIntegerField()),
-                ('implant_slot', models.SmallIntegerField()),
-            ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='ItemCategory',
@@ -440,20 +361,14 @@ class Migration(migrations.Migration):
                 ('id', models.IntegerField(serialize=False, primary_key=True)),
                 ('name', models.CharField(max_length=64)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='ItemGroup',
             fields=[
                 ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('name', models.CharField(max_length=64)),
+                ('name', models.CharField(max_length=128)),
                 ('category', models.ForeignKey(to='thing.ItemCategory')),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='JournalEntry',
@@ -469,13 +384,10 @@ class Migration(migrations.Migration):
                 ('balance', models.DecimalField(max_digits=17, decimal_places=2)),
                 ('reason', models.CharField(max_length=255)),
                 ('tax_amount', models.DecimalField(max_digits=14, decimal_places=2)),
-                ('character', models.ForeignKey(to='thing.Character')),
-                ('corp_wallet', models.ForeignKey(blank=True, to='thing.CorpWallet', null=True)),
             ],
             options={
                 'ordering': ('-date',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='MailingList',
@@ -483,9 +395,6 @@ class Migration(migrations.Migration):
                 ('id', models.IntegerField(serialize=False, primary_key=True)),
                 ('name', models.CharField(max_length=255)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='MailMessage',
@@ -499,13 +408,10 @@ class Migration(migrations.Migration):
                 ('to_list_id', models.IntegerField()),
                 ('body', models.TextField(null=True, blank=True)),
                 ('read', models.BooleanField(default=False)),
-                ('character', models.ForeignKey(to='thing.Character')),
-                ('to_characters', models.ManyToManyField(related_name='+', to='thing.Character')),
             ],
             options={
                 'ordering': ('-sent_date',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='MarketGroup',
@@ -518,9 +424,6 @@ class Migration(migrations.Migration):
                 ('level', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('parent', mptt.fields.TreeForeignKey(related_name='children', blank=True, to='thing.MarketGroup', null=True)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='MarketOrder',
@@ -536,13 +439,10 @@ class Migration(migrations.Migration):
                 ('minimum_volume', models.IntegerField()),
                 ('issued', models.DateTimeField(db_index=True)),
                 ('expires', models.DateTimeField(db_index=True)),
-                ('character', models.ForeignKey(to='thing.Character')),
-                ('corp_wallet', models.ForeignKey(blank=True, to='thing.CorpWallet', null=True)),
             ],
             options={
                 'ordering': ('buy_order', 'item__name'),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Pin',
@@ -558,9 +458,6 @@ class Migration(migrations.Migration):
                 ('content_size', models.DecimalField(default=0, max_digits=16, decimal_places=4)),
                 ('colony', models.ForeignKey(to='thing.Colony')),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='PinContent',
@@ -568,9 +465,6 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('quantity', models.IntegerField()),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='PriceHistory',
@@ -586,7 +480,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('-date',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='RefType',
@@ -594,9 +487,6 @@ class Migration(migrations.Migration):
                 ('id', models.IntegerField(serialize=False, primary_key=True)),
                 ('name', models.CharField(max_length=64)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Region',
@@ -607,20 +497,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('name',),
             },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Skill',
-            fields=[
-                ('item', models.OneToOneField(primary_key=True, serialize=False, to='thing.Item')),
-                ('rank', models.SmallIntegerField()),
-                ('description', models.TextField()),
-                ('primary_attribute', models.SmallIntegerField(choices=[(164, b'Cha'), (165, b'Int'), (166, b'Mem'), (167, b'Per'), (168, b'Wil')])),
-                ('secondary_attribute', models.SmallIntegerField(choices=[(164, b'Cha'), (165, b'Int'), (166, b'Mem'), (167, b'Per'), (168, b'Wil')])),
-            ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='SkillPlan',
@@ -633,7 +509,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('name',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='SkillQueue',
@@ -644,13 +519,10 @@ class Migration(migrations.Migration):
                 ('start_sp', models.IntegerField()),
                 ('end_sp', models.IntegerField()),
                 ('to_level', models.SmallIntegerField()),
-                ('character', models.ForeignKey(to='thing.Character')),
-                ('skill', models.ForeignKey(to='thing.Skill')),
             ],
             options={
                 'ordering': ('start_time',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='SPEntry',
@@ -662,7 +534,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('position',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='SPRemap',
@@ -674,9 +545,6 @@ class Migration(migrations.Migration):
                 ('wil_stat', models.IntegerField()),
                 ('cha_stat', models.IntegerField()),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='SPSkill',
@@ -684,22 +552,17 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('level', models.IntegerField()),
                 ('priority', models.IntegerField()),
-                ('skill', models.ForeignKey(to='thing.Skill')),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Station',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
+                ('id', models.BigIntegerField(serialize=False, primary_key=True)),
                 ('name', models.CharField(max_length=128)),
                 ('short_name', models.CharField(default=b'', max_length=64)),
+                ('structure', models.BooleanField(default=False)),
+                ('lastupdated', models.DateTimeField(auto_now=True)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='System',
@@ -711,7 +574,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('name',),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='TaskState',
@@ -724,9 +586,6 @@ class Migration(migrations.Migration):
                 ('mod_time', models.DateTimeField(db_index=True)),
                 ('next_time', models.DateTimeField(db_index=True)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Transaction',
@@ -738,16 +597,7 @@ class Migration(migrations.Migration):
                 ('quantity', models.IntegerField()),
                 ('price', models.DecimalField(max_digits=14, decimal_places=2)),
                 ('total_price', models.DecimalField(max_digits=17, decimal_places=2)),
-                ('character', models.ForeignKey(to='thing.Character')),
-                ('corp_wallet', models.ForeignKey(blank=True, to='thing.CorpWallet', null=True)),
-                ('item', models.ForeignKey(to='thing.Item')),
-                ('other_char', models.ForeignKey(related_name='transaction_others', blank=True, to='thing.Character', null=True)),
-                ('other_corp', models.ForeignKey(blank=True, to='thing.Corporation', null=True)),
-                ('station', models.ForeignKey(to='thing.Station')),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='UserProfile',
@@ -779,286 +629,433 @@ class Migration(migrations.Migration):
                 ('home_show_security', models.BooleanField(default=True)),
                 ('user', models.OneToOneField(related_name='profile', to=settings.AUTH_USER_MODEL)),
             ],
-            options={
-            },
-            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='CharacterConfig',
+            fields=[
+                ('character', models.OneToOneField(related_name='config', primary_key=True, serialize=False, to='thing.Character')),
+                ('is_public', models.BooleanField(default=False)),
+                ('show_implants', models.BooleanField(default=False)),
+                ('show_skill_queue', models.BooleanField(default=False)),
+                ('show_standings', models.BooleanField(default=False)),
+                ('show_wallet', models.BooleanField(default=False)),
+                ('anon_key', models.CharField(default=b'', max_length=16)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CharacterDetails',
+            fields=[
+                ('character', models.OneToOneField(related_name='details', primary_key=True, serialize=False, to='thing.Character')),
+                ('wallet_balance', models.DecimalField(default=0, max_digits=18, decimal_places=2)),
+                ('cha_attribute', models.SmallIntegerField(default=20)),
+                ('int_attribute', models.SmallIntegerField(default=20)),
+                ('mem_attribute', models.SmallIntegerField(default=20)),
+                ('per_attribute', models.SmallIntegerField(default=20)),
+                ('wil_attribute', models.SmallIntegerField(default=19)),
+                ('security_status', models.DecimalField(default=0, max_digits=6, decimal_places=4)),
+                ('last_known_location', models.CharField(default=b'', max_length=255)),
+                ('ship_name', models.CharField(default=b'', max_length=128)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Implant',
+            fields=[
+                ('item', models.OneToOneField(primary_key=True, serialize=False, to='thing.Item')),
+                ('description', models.TextField()),
+                ('charisma_modifier', models.SmallIntegerField()),
+                ('intelligence_modifier', models.SmallIntegerField()),
+                ('memory_modifier', models.SmallIntegerField()),
+                ('perception_modifier', models.SmallIntegerField()),
+                ('willpower_modifier', models.SmallIntegerField()),
+                ('implant_slot', models.SmallIntegerField()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Skill',
+            fields=[
+                ('item', models.OneToOneField(primary_key=True, serialize=False, to='thing.Item')),
+                ('rank', models.SmallIntegerField()),
+                ('description', models.TextField()),
+                ('primary_attribute', models.SmallIntegerField(choices=[(164, b'Cha'), (165, b'Int'), (166, b'Mem'), (167, b'Per'), (168, b'Wil')])),
+                ('secondary_attribute', models.SmallIntegerField(choices=[(164, b'Cha'), (165, b'Int'), (166, b'Mem'), (167, b'Per'), (168, b'Wil')])),
+            ],
+        ),
+        migrations.AddField(
+            model_name='transaction',
+            name='character',
+            field=models.ForeignKey(to='thing.Character'),
+        ),
+        migrations.AddField(
+            model_name='transaction',
+            name='corp_wallet',
+            field=models.ForeignKey(blank=True, to='thing.CorpWallet', null=True),
+        ),
+        migrations.AddField(
+            model_name='transaction',
+            name='item',
+            field=models.ForeignKey(to='thing.Item'),
+        ),
+        migrations.AddField(
+            model_name='transaction',
+            name='other_char',
+            field=models.ForeignKey(related_name='transaction_others', blank=True, to='thing.Character', null=True),
+        ),
+        migrations.AddField(
+            model_name='transaction',
+            name='other_corp',
+            field=models.ForeignKey(blank=True, to='thing.Corporation', null=True),
+        ),
+        migrations.AddField(
+            model_name='transaction',
+            name='station',
+            field=models.ForeignKey(to='thing.Station'),
         ),
         migrations.AddField(
             model_name='station',
             name='system',
             field=models.ForeignKey(to='thing.System'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='spentry',
             name='sp_remap',
             field=models.ForeignKey(blank=True, to='thing.SPRemap', null=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='spentry',
             name='sp_skill',
             field=models.ForeignKey(blank=True, to='thing.SPSkill', null=True),
-            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='skillqueue',
+            name='character',
+            field=models.ForeignKey(to='thing.Character'),
         ),
         migrations.AddField(
             model_name='pricehistory',
             name='item',
             field=models.ForeignKey(to='thing.Item'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='pricehistory',
             name='region',
             field=models.ForeignKey(to='thing.Region'),
-            preserve_default=True,
-        ),
-        migrations.AlterUniqueTogether(
-            name='pricehistory',
-            unique_together=set([('region', 'item', 'date')]),
         ),
         migrations.AddField(
             model_name='pincontent',
             name='item',
             field=models.ForeignKey(related_name='+', to='thing.Item'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='pincontent',
             name='pin',
             field=models.ForeignKey(to='thing.Pin'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='pin',
             name='type',
             field=models.ForeignKey(related_name='+', to='thing.Item'),
-            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='marketorder',
+            name='character',
+            field=models.ForeignKey(to='thing.Character'),
+        ),
+        migrations.AddField(
+            model_name='marketorder',
+            name='corp_wallet',
+            field=models.ForeignKey(blank=True, to='thing.CorpWallet', null=True),
         ),
         migrations.AddField(
             model_name='marketorder',
             name='item',
             field=models.ForeignKey(to='thing.Item'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='marketorder',
             name='station',
             field=models.ForeignKey(to='thing.Station'),
-            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='mailmessage',
+            name='character',
+            field=models.ForeignKey(to='thing.Character'),
+        ),
+        migrations.AddField(
+            model_name='mailmessage',
+            name='to_characters',
+            field=models.ManyToManyField(related_name='_mailmessage_to_characters_+', to='thing.Character'),
+        ),
+        migrations.AddField(
+            model_name='journalentry',
+            name='character',
+            field=models.ForeignKey(to='thing.Character'),
+        ),
+        migrations.AddField(
+            model_name='journalentry',
+            name='corp_wallet',
+            field=models.ForeignKey(blank=True, to='thing.CorpWallet', null=True),
         ),
         migrations.AddField(
             model_name='journalentry',
             name='ref_type',
             field=models.ForeignKey(to='thing.RefType'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='journalentry',
             name='tax_corp',
             field=models.ForeignKey(blank=True, to='thing.Corporation', null=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='item',
             name='item_group',
             field=models.ForeignKey(to='thing.ItemGroup'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='item',
             name='market_group',
             field=models.ForeignKey(blank=True, to='thing.MarketGroup', null=True),
-            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='industryjob',
+            name='character',
+            field=models.ForeignKey(to='thing.Character'),
+        ),
+        migrations.AddField(
+            model_name='industryjob',
+            name='corporation',
+            field=models.ForeignKey(blank=True, to='thing.Corporation', null=True),
         ),
         migrations.AddField(
             model_name='industryjob',
             name='product',
             field=models.ForeignKey(related_name='job_products', blank=True, to='thing.Item', null=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='industryjob',
             name='system',
             field=models.ForeignKey(to='thing.System'),
-            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='factionstanding',
+            name='character',
+            field=models.ForeignKey(to='thing.Character'),
+        ),
+        migrations.AddField(
+            model_name='factionstanding',
+            name='faction',
+            field=models.ForeignKey(to='thing.Faction'),
+        ),
+        migrations.AddField(
+            model_name='esitoken',
+            name='character',
+            field=models.OneToOneField(related_name='esitoken', null=True, to='thing.Character'),
+        ),
+        migrations.AddField(
+            model_name='esitoken',
+            name='user',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='corporationstanding',
+            name='character',
+            field=models.ForeignKey(to='thing.Character'),
+        ),
+        migrations.AddField(
+            model_name='corporationstanding',
+            name='corporation',
+            field=models.ForeignKey(to='thing.Corporation'),
         ),
         migrations.AddField(
             model_name='contractitem',
             name='item',
             field=models.ForeignKey(related_name='contract_items', to='thing.Item'),
-            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='contract',
+            name='character',
+            field=models.ForeignKey(to='thing.Character'),
         ),
         migrations.AddField(
             model_name='contract',
             name='corporation',
             field=models.ForeignKey(blank=True, to='thing.Corporation', null=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='contract',
             name='end_station',
             field=models.ForeignKey(related_name='+', blank=True, to='thing.Station', null=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='contract',
             name='issuer_char',
             field=models.ForeignKey(related_name='+', blank=True, to='thing.Character', null=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='contract',
             name='issuer_corp',
             field=models.ForeignKey(related_name='+', to='thing.Corporation'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='contract',
             name='start_station',
             field=models.ForeignKey(related_name='+', blank=True, to='thing.Station', null=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='constellation',
             name='region',
             field=models.ForeignKey(to='thing.Region'),
-            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='colony',
+            name='character',
+            field=models.ForeignKey(to='thing.Character'),
         ),
         migrations.AddField(
             model_name='colony',
             name='system',
             field=models.ForeignKey(to='thing.System'),
-            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='clone',
+            name='character',
+            field=models.ForeignKey(related_name='clones', to='thing.Character'),
+        ),
+        migrations.AddField(
+            model_name='clone',
+            name='location',
+            field=models.ForeignKey(to='thing.Station', null=True),
+        ),
+        migrations.AddField(
+            model_name='characterskill',
+            name='character',
+            field=models.ForeignKey(related_name='skills', to='thing.Character'),
+        ),
+        migrations.AddField(
+            model_name='character',
+            name='corporation',
+            field=models.ForeignKey(blank=True, to='thing.Corporation', null=True),
+        ),
+        migrations.AddField(
+            model_name='campaign',
+            name='characters',
+            field=models.ManyToManyField(to='thing.Character', null=True, blank=True),
+        ),
+        migrations.AddField(
+            model_name='campaign',
+            name='corp_wallets',
+            field=models.ManyToManyField(to='thing.CorpWallet', null=True, blank=True),
+        ),
+        migrations.AddField(
+            model_name='campaign',
+            name='user',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='blueprintproduct',
+            name='item',
+            field=models.ForeignKey(to='thing.Item'),
+        ),
+        migrations.AddField(
+            model_name='blueprintcomponent',
+            name='item',
+            field=models.ForeignKey(to='thing.Item'),
+        ),
+        migrations.AddField(
+            model_name='assetsummary',
+            name='character',
+            field=models.ForeignKey(to='thing.Character'),
+        ),
+        migrations.AddField(
+            model_name='assetsummary',
+            name='station',
+            field=models.ForeignKey(blank=True, to='thing.Station', null=True),
+        ),
+        migrations.AddField(
+            model_name='assetsummary',
+            name='system',
+            field=models.ForeignKey(to='thing.System'),
+        ),
+        migrations.AddField(
+            model_name='asset',
+            name='character',
+            field=models.ForeignKey(to='thing.Character'),
+        ),
+        migrations.AddField(
+            model_name='asset',
+            name='inv_flag',
+            field=models.ForeignKey(to='thing.InventoryFlag'),
+        ),
+        migrations.AddField(
+            model_name='asset',
+            name='item',
+            field=models.ForeignKey(to='thing.Item'),
+        ),
+        migrations.AddField(
+            model_name='asset',
+            name='station',
+            field=models.ForeignKey(blank=True, to='thing.Station', null=True),
+        ),
+        migrations.AddField(
+            model_name='asset',
+            name='system',
+            field=models.ForeignKey(blank=True, to='thing.System', null=True),
+        ),
+        migrations.AddField(
+            model_name='apikey',
+            name='characters',
+            field=models.ManyToManyField(related_name='apikeys', to='thing.Character'),
+        ),
+        migrations.AddField(
+            model_name='apikey',
+            name='corp_character',
+            field=models.ForeignKey(related_name='corporate_apikey', blank=True, to='thing.Character', null=True),
+        ),
+        migrations.AddField(
+            model_name='apikey',
+            name='corporation',
+            field=models.ForeignKey(blank=True, to='thing.Corporation', null=True),
+        ),
+        migrations.AddField(
+            model_name='apikey',
+            name='user',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='spskill',
+            name='skill',
+            field=models.ForeignKey(to='thing.Skill'),
+        ),
+        migrations.AddField(
+            model_name='skillqueue',
+            name='skill',
+            field=models.ForeignKey(to='thing.Skill'),
+        ),
+        migrations.AlterUniqueTogether(
+            name='pricehistory',
+            unique_together=set([('region', 'item', 'date')]),
         ),
         migrations.AlterUniqueTogether(
             name='colony',
             unique_together=set([('character', 'planet_id')]),
         ),
         migrations.AddField(
+            model_name='cloneimplant',
+            name='implant',
+            field=models.ForeignKey(to='thing.Implant'),
+        ),
+        migrations.AddField(
             model_name='characterskill',
             name='skill',
             field=models.ForeignKey(to='thing.Skill'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='characterdetails',
             name='implants',
             field=models.ManyToManyField(to='thing.Implant'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='characterdetails',
             name='ship_item',
             field=models.ForeignKey(blank=True, to='thing.Item', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='character',
-            name='corporation',
-            field=models.ForeignKey(blank=True, to='thing.Corporation', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='campaign',
-            name='characters',
-            field=models.ManyToManyField(to='thing.Character', null=True, blank=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='campaign',
-            name='corp_wallets',
-            field=models.ManyToManyField(to='thing.CorpWallet', null=True, blank=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='campaign',
-            name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='blueprintproduct',
-            name='item',
-            field=models.ForeignKey(to='thing.Item'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='blueprintcomponent',
-            name='item',
-            field=models.ForeignKey(to='thing.Item'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='assetsummary',
-            name='character',
-            field=models.ForeignKey(to='thing.Character'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='assetsummary',
-            name='station',
-            field=models.ForeignKey(blank=True, to='thing.Station', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='assetsummary',
-            name='system',
-            field=models.ForeignKey(to='thing.System'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='asset',
-            name='character',
-            field=models.ForeignKey(to='thing.Character'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='asset',
-            name='inv_flag',
-            field=models.ForeignKey(to='thing.InventoryFlag'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='asset',
-            name='item',
-            field=models.ForeignKey(to='thing.Item'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='asset',
-            name='station',
-            field=models.ForeignKey(blank=True, to='thing.Station', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='asset',
-            name='system',
-            field=models.ForeignKey(to='thing.System'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='apikey',
-            name='characters',
-            field=models.ManyToManyField(related_name='apikeys', to='thing.Character'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='apikey',
-            name='corp_character',
-            field=models.ForeignKey(related_name='corporate_apikey', blank=True, to='thing.Character', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='apikey',
-            name='corporation',
-            field=models.ForeignKey(blank=True, to='thing.Corporation', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='apikey',
-            name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
-            preserve_default=True,
         ),
     ]

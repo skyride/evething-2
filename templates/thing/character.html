@@ -320,11 +320,13 @@
                         <table class="table table-stripled table-condensed table-hover" style="margin-bottom: 0;">
                           <tbody>
                           {% if clone.implants.all()|length > 0 %}
-                            {% for implant in clone.implants.all() %}
+                            {% for implant in clone.implants.order_by('implant__implant_slot') %}
                               <tr>
-                                <td class="col-sm-1"><img src="//image.eveonline.com/Type/{{ implant.item_id }}_32.png" /></td>
-                                <td>{{ implant.item.name }}</td>
-                                <td class="col-sm-2 col-xs-3" style="vertical-align: middle;">{{ implant.item.sell_price|commas }}</td>
+                                <td class="col-sm-1">
+                                  <div align="center"><img src="//image.eveonline.com/Type/{{ implant.implant_id }}_32.png" /></div>
+                                </td>
+                                <td style="vertical-align: middle;">{{ implant.implant.item.name }}</td>
+                                <td class="col-sm-2 col-xs-3" style="vertical-align: middle;">{{ implant.implant.item.sell_price|commas }}</td>
                               </tr>
                             {% endfor %}
                             <tr>

@@ -32,7 +32,6 @@ from django.db import models
 class UserProfile(models.Model):
     """Profile information for a user"""
     HOME_SORT_ORDERS = (
-        ('apiname', 'APIKey name'),
         ('charname', 'Character name'),
         ('corpname', 'Corporation name'),
         ('totalsp', 'Total SP'),
@@ -64,8 +63,8 @@ class UserProfile(models.Model):
 
     # Home view options
     home_chars_per_row = models.IntegerField(default=4)
-    home_sort_order = models.CharField(choices=HOME_SORT_ORDERS, max_length=12, default='apiname')
-    home_sort_descending = models.BooleanField(default=False)
+    home_sort_order = models.CharField(choices=HOME_SORT_ORDERS, max_length=12, default='totalsp')
+    home_sort_descending = models.BooleanField(default=True)
     home_hide_characters = models.TextField(default='', blank=True)
     home_show_locations = models.BooleanField(default=True)
     home_highlight_backgrounds = models.BooleanField(default=True)

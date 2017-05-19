@@ -86,6 +86,14 @@ MIDDLEWARE_CLASSES = (
     'thing.middleware.LastSeenMiddleware',
 )
 
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'DIRS': [os.path.join(".", 'templates')],
+        'APP_DIRS': True,
+    },
+]
+
 ROOT_URLCONF = 'evething.urls'
 
 TEMPLATE_DIRS = (

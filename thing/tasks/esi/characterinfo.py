@@ -324,7 +324,7 @@ class ESI_CharacterInfo(APITask):
                     for implant_id in clone['implants']:
                         db_implant = CloneImplant(
                             clone=db_clone,
-                            item_id=implant_id
+                            implant_id=implant_id
                         )
                         db_implant.save()
 
@@ -337,11 +337,11 @@ class ESI_CharacterInfo(APITask):
             return System.objects.get(id=location['solar_system_id']).name
 
         if "station_id" in location:
-            return Station.objects.get(id=location['station_id']).name
+            return Station.get_or_create(location['station_id'], self.api).name
 
         if "structure_id" in location:
             try:
-                structure = self.api.get("/universe/structures/%s/" % location['structure_id'])
+                structure = Station.get_or_create(location['structure_id'], self.api)
                 str_type = Item.objects.get(id=structure['type_id'])
                 return "%s (%s)" % (structure['name'], str_type.name)
             except Exception:

@@ -35,7 +35,7 @@ class BlueprintProduct(models.Model):
     blueprint = models.ForeignKey(Blueprint)
 
     activity = models.IntegerField(choices=IndustryJob.ACTIVITY_CHOICES)
-    item = models.ForeignKey(Item)
+    item = models.ForeignKey(Item, db_constraint=False)
     count = models.IntegerField()
 
     class Meta:

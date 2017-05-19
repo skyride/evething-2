@@ -80,17 +80,30 @@ class Station(models.Model):
                     except Exception:
                         # We failed to get it, probably because it's a structure
                         # this token no longer has docking rights for
-                        pass
+                        # Save the station anyway so don't repeatedly bash the API
+                        station.save()
 
                 return station
 
         try:
-            # It doesn't exist, lets create it
-            r = api.get("/universe/structures/%s/" % id)
-            station = Station(id=id)
-            station.name = r['name']
-            station.system_id = r['solar_system_id']
-            station.structure = True
+            # Check if its a sov station we don't have yet
+            if id < 71001146:
+                r = api.get("/universe/stations/%s/" % id)
+                station = Station(
+                    id=id,
+                    name=r['name'],
+                    system_id=r['system_id'],
+                    structure=False
+                )
+            else:
+                # It doesn't exist, lets create it
+                r = api.get("/universe/structures/%s/" % id)
+                station = Station(
+                    id=id,
+                    name=r['name'],
+                    system_id=r['solar_system_id'],
+                    structure=True
+                )
             station.save()
 
             return station
