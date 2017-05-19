@@ -193,15 +193,22 @@ class ESI_CharacterInfo(APITask):
 
         # Rebuild asset summary
         AssetSummary.objects.filter(character=character).delete()
-        summaries = Station.objects.filter(asset__character=character).annotate(
-                total_items=Sum("asset__quantity"),
-                total_volume=Sum(
-                    F('asset__quantity') * F('asset__item__volume'), output_field=FloatField()
-                ),
-                total_value=Sum(
-                    F('asset__quantity') * F('asset__item__sell_price'), output_field=FloatField()
-                )
-        )
+        summaries = Asset.objects.raw('''
+            SELECT
+                thing_station.id as id,
+            	thing_station.id as station_id,
+                thing_station.system_id as system_id,
+                SUM(thing_asset.quantity) as total_items,
+                SUM(thing_asset.quantity * thing_item.volume) as total_volume,
+                SUM(thing_asset.quantity * thing_item.sell_price) as total_value
+            FROM thing_asset
+            INNER JOIN thing_station ON thing_station.id = thing_asset.station_id
+            INNER JOIN thing_item ON thing_item.id = thing_asset.item_id
+            WHERE thing_asset.character_id = %s
+            GROUP BY thing_station.id
+            ORDER BY thing_station.name
+            ''', [character.id])
+
         for summary in summaries:
             db_summary = AssetSummary(
                 character=character,
