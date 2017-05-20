@@ -23,6 +23,8 @@
 # OF SUCH DAMAGE.
 # ------------------------------------------------------------------------------
 
+from datetime import datetime, timedelta
+
 from django.db import models
 from django.db.models import Sum
 
@@ -35,6 +37,7 @@ class Corporation(models.Model):
     ticker = models.CharField(max_length=5, default='')
 
     alliance = models.ForeignKey(Alliance, blank=True, null=True)
+    last_updated = models.DateTimeField(auto_now=True, default=datetime(0001, 1, 1, 1, 0))
 
     division1 = models.CharField(max_length=64, default='')
     division2 = models.CharField(max_length=64, default='')
@@ -63,11 +66,26 @@ class Corporation(models.Model):
         if len(corporation) == 0:
             api = ESI()
             corporation = api.get("/corporations/%s/" % corporation_id)
-            corporation = Corporation(id=corporation_id, name=corporation['corporation_name'])
-            corporation.save()
-            return corporation
+            db_corporation = Corporation(
+                id=corporation_id,
+                name=corporation['corporation_name']
+                )
+
+            if "alliance_id" in corporation:
+                db_corporation.alliance = Alliance.get_or_create(corporation['alliance_id'])
+
+            db_corporation.save()
+
+            return db_corporation
         else:
-            return corporation[0]
+            db_corporation = corporation[0]
+            if db_corporation.last_updated < datetime.now() - timedelta(days=2):
+                api = ESI()
+                corporation = api.get("/corporations/%s/" % corporation_id)
+                db_corporation.name = corporation['corporation_name']
+                db_corporation.alliance = Alliance.get_or_create(corporation['alliance_id'])
+                db_corporation.save()
+            return db_corporation
 
 
     @staticmethod

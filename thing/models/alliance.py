@@ -23,6 +23,8 @@
 # OF SUCH DAMAGE.
 # ------------------------------------------------------------------------------
 
+from datetime import datetime, timedelta
+
 from django.db import models
 
 
@@ -30,6 +32,34 @@ class Alliance(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=64)
     short_name = models.CharField(max_length=5)
+    last_updated = models.DateTimeField(auto_now=True, default=datetime(0001, 1, 1, 1, 0))
 
     class Meta:
         app_label = 'thing'
+
+
+    @staticmethod
+    def get_or_create(alliance_id):
+        from thing.esi import ESI
+        api = ESI()
+
+        db_alliance = Alliance.objects.filter(id=alliance_id)
+        if len(db_alliance) == 0:
+            alliance = api.get("/alliances/%s/" % alliance_id)
+            db_alliance = Alliance(
+                id=alliance_id,
+                name=alliance['alliance_name'],
+                short_name=alliance['ticker']
+            )
+            db_alliance.save()
+
+            return db_alliance
+        else:
+            db_alliance = db_alliance[0]
+            if db_alliance.last_updated < datetime.now() - timedelta(days=2):
+                alliance = api.get("/alliances/%s/" % alliance_id)
+                db_alliance.name = alliance['alliance_name']
+                db_alliance.short_name = alliance['ticker']
+                db_alliance.save()
+                
+            return db_alliance

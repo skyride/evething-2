@@ -12,13 +12,16 @@ api = ESI(token)
 #print api.get("/characters/$id/clones")
 #print api.post("/characters/$id/cspa/", data={"characters": [93637573]})
 
-#task = ESI_CharacterInfo()
-#task.run(token.id)
-task = ESI_MarketUpdateSpawner()
-task.run()
+task = ESI_CharacterInfo()
+task.run(token.id)
+#task = ESI_MarketUpdateSpawner()
+#task = ESI_AllianceUpdateTask()
+#task.run()
 
-"""for token in ESIToken.objects.all():
-    print token.name
-    task.run(token.id)"""
+#print Alliance.get_or_create(386292982)
+
+#for token in ESIToken.objects.all():
+#    print token.name
+#    task.run(token.id)
 
 #print json.dumps(api.get("/characters/$id/standings/"))
