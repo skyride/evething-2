@@ -349,8 +349,8 @@ class ESI_CharacterInfo(APITask):
         if "structure_id" in location:
             try:
                 structure = Station.get_or_create(location['structure_id'], self.api)
-                str_type = Item.objects.get(id=structure['type_id'])
-                return "%s (%s)" % (structure['name'], str_type.name)
+                str_type = structure.item
+                return "%s (%s)" % (structure.name, str_type.name)
             except Exception:
                 return ""
 

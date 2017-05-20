@@ -313,7 +313,11 @@
                   <div class="col-xs-12 col-sm-12 col-lg-12">
                     <div class="panel panel-default">
                       <div class="panel-heading">
+                        {% if clone.location is not none %}
                         {{ clone.location.name }}
+                        {% else %}
+                        <i>**Unknown Structure**</i>
+                        {% endif %}
                       </div>
 
                       <div class="panel-body>">

@@ -29,6 +29,7 @@ from django.db import models
 
 from evething import local_settings
 from thing.models.system import System
+from thing.models.item import Item
 
 numeral_map = zip(
     (1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1),
@@ -52,6 +53,7 @@ class Station(models.Model):
     name = models.CharField(max_length=128)
     short_name = models.CharField(max_length=64, default='')
     structure = models.BooleanField(default=False)
+    item = models.ForeignKey(Item, null=True)
     lastupdated = models.DateTimeField(auto_now=True)
 
     system = models.ForeignKey(System)
@@ -102,7 +104,8 @@ class Station(models.Model):
                     id=id,
                     name=r['name'],
                     system_id=r['solar_system_id'],
-                    structure=True
+                    structure=True,
+                    item_id=r['type_id']
                 )
             station.save()
 
