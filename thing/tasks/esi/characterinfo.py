@@ -341,14 +341,15 @@ class ESI_CharacterInfo(APITask):
         mails = self.api.get("/characters/$id/mail/")
 
         # Filter out mails we already have
-        db_mail_ids = MailMessage.objects.filter(
-            character=character
-        ).values_list('message_id', flat=True)
-        mails = filter(lambda x: x['mail_id'] not in db_mail_ids, mails)
+        if mails is not None:
+            db_mail_ids = MailMessage.objects.filter(
+                character=character
+            ).values_list('message_id', flat=True)
+            mails = filter(lambda x: x['mail_id'] not in db_mail_ids, mails)
 
-        mail_task = ESI_MailFetchTask()
-        for mail in mails:
-            mail_task.delay(token_id, mail)
+            mail_task = ESI_MailFetchTask()
+            for mail in mails:
+                mail_task.delay(token_id, mail)
 
 
         character.esitoken.save()
