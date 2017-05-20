@@ -1,2 +1,2 @@
 from characterinfo import *
-from task_spawner import *
+from character_update_spawner import *
