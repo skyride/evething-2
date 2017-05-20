@@ -6,13 +6,14 @@ from django.db import transaction
 from django.db.models import Sum, F, FloatField
 
 from .apitask import APITask
+from .mail_fetch_task import ESI_MailFetchTask
 
 from thing.esi_enums import *
 from thing.esi import ESI
 from thing.models import Character, CharacterConfig, CharacterDetails, Item, System, Station, \
                          CharacterSkill, SkillQueue, Corporation, Faction, FactionStanding, \
                          CorporationStanding, Asset, System, InventoryFlag, AssetSummary, \
-                         IndustryJob, MarketOrder, Clone, CloneImplant
+                         IndustryJob, MarketOrder, Clone, CloneImplant, MailMessage
 
 # This task effectively replaces the characterInfo and characterSheet calls
 class ESI_CharacterInfo(APITask):
@@ -334,6 +335,21 @@ class ESI_CharacterInfo(APITask):
                             implant_id=implant_id
                         )
                         db_implant.save()
+
+
+        ## Mails
+        mails = self.api.get("/characters/$id/mail/")
+
+        # Filter out mails we already have
+        db_mail_ids = MailMessage.objects.filter(
+            character=character
+        ).values_list('message_id', flat=True)
+        mails = filter(lambda x: x['mail_id'] not in db_mail_ids, mails)
+
+        mail_task = ESI_MailFetchTask()
+        for mail in mails:
+            mail_task.delay(token_id, mail)
+
 
         character.esitoken.save()
         print "Finished updating %s:%s" % (character.id, character.name)

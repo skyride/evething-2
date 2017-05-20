@@ -42,6 +42,29 @@ class Character(models.Model):
     def __unicode__(self):
         return self.name
 
+
+    @staticmethod
+    def get_or_create(id):
+        from thing.esi import ESI
+
+        db_char = Character.objects.filter(id=id)
+        if len(db_char) == 0:
+            api = ESI()
+            char = api.get("/characters/%s/" % id)
+            db_char = Character(
+                id=id,
+                name=char['name'],
+                corporation=Corporation.get_or_create(char['corporation_id'])
+            )
+            db_char.save()
+        else:
+            db_char = db_char[0]
+
+        return db_char
+
+
+
+
     @models.permalink
     def get_absolute_url(self):
         return ('character', (), {'character_name': self.name, })

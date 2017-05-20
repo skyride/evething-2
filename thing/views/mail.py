@@ -34,7 +34,7 @@ from thing.stuff import render_page, flush_cache
 @login_required
 def mail(request):
     char_qs = Character.objects.filter(
-        apikeys__user=request.user,
+        esitoken__user=request.user,
     ).distinct()
 
     characters = []
@@ -59,7 +59,7 @@ def mail(request):
 def mail_json_body(request, message_id):
     messages = MailMessage.objects.filter(
         message_id=message_id,
-        character__apikeys__user=request.user,
+        character__esitoken__user=request.user,
     )
     if messages.count() > 0:
         data = dict(body=messages[0].stripped_body())
@@ -83,7 +83,7 @@ def mail_json_headers(request):
 
     # Build a queryset
     message_qs = MailMessage.objects.filter(
-        character__apikeys__user=request.user,
+        character__esitoken__user=request.user,
     ).prefetch_related(
         'character',
         'to_characters',
@@ -181,7 +181,7 @@ def mail_mark_read(request):
 
         if message_ids:
             MailMessage.objects.filter(
-                character__apikeys__user=request.user,
+                character__esitoken__user=request.user,
                 message_id__in=message_ids,
             ).update(
                 read=True,
