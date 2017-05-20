@@ -18,16 +18,25 @@ class ESI_MarketUpdateSpawner(APITask):
 
     def run(self):
         # Get objects to query
+        # ## Just used
+        # items = Item.objects.filter(
+        #     market_group_id__isnull=False,
+        #     last_updated__lt=datetime.now() - timedelta(days=1)
+        # ).annotate(
+        #     total_assets = Count('assets'),
+        #     total_implants = Count('implant__implants')
+        # ).filter(
+        #     Q(total_assets__gt=0) | Q(total_implants__gt=0)
+        # ).order_by(
+        #     '-total_assets'
+        # ).all()
+
+        ## All
         items = Item.objects.filter(
             market_group_id__isnull=False,
             last_updated__lt=datetime.now() - timedelta(days=1)
-        ).annotate(
-            total_assets = Count('assets'),
-            total_implants = Count('implant__implants')
-        ).filter(
-            Q(total_assets__gt=0) | Q(total_implants__gt=0)
         ).order_by(
-            '-total_assets'
+            'id'
         ).all()
 
         # Generate market update tasks based on a paginated list
