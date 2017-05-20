@@ -1,5 +1,6 @@
-from django.db import models
+from datetime import datetime
 
+from django.db import models
 from django.contrib.auth.models import User
 
 from thing.models.character import Character
@@ -11,6 +12,7 @@ class ESIToken(models.Model):
     user = models.ForeignKey(User)
     status = models.BooleanField(default=True)
     added = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True, default=datetime(0001, 1, 1, 1, 0))
 
     token_type = models.CharField(max_length=32)
     characterID = models.IntegerField(default=None, null=True)

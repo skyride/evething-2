@@ -55,6 +55,7 @@ API_FAILURE_LIMIT = 3
 # When you create the ESI application at developers.eveonline.com you should
 # fill in this section
 ESI_URL = "https://esi.tech.ccp.is/latest"
+ESI_UPDATE_INTERVAL = 60  # How often to update in minutes
 ESI_RETRIES = 15
 ESI_DATASOURCE = "tranquility"
 ESI_CLIENT_ID = ''

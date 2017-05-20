@@ -335,6 +335,9 @@ class ESI_CharacterInfo(APITask):
                         )
                         db_implant.save()
 
+        character.esitoken.save()
+        print "Finished updating %s:%s" % (character.id, character.name)
+
 
 
     # Generates the last known location string

@@ -148,7 +148,7 @@ LOGGING = {
 LOGIN_REDIRECT_URL = '/'
 
 # email address that server mails appear to be from
-SERVER_EMAIL = 'evething@wafflemonster.org'
+SERVER_EMAIL = 'skylinerspeeder@gmail.com'
 
 # Auth profile thing
 AUTH_PROFILE_MODULE = 'thing.UserProfile'
@@ -214,63 +214,71 @@ CELERY_QUEUES = (
 from datetime import timedelta
 
 CELERYBEAT_SCHEDULE = {
-    # spawn tasks every 30 seconds
-    'task_spawner': {
-        'task': 'thing.task_spawner',
+    'esi_task_spawner': {
+        'task': 'thing.esi.character_update_spawner',
         'schedule': timedelta(seconds=10),
         'options': {
-            'expires': 9,
-            'queue': 'et_high',
-        },
-        'args': (),
-    },
-
-    # clean up various table messes every 5 minutes
-    'table_cleaner': {
-        'task': 'thing.table_cleaner',
-        'schedule': timedelta(minutes=5),
-        'options': {
-            'queue': 'et_high',
-        },
-        'args': (),
-    },
-
-    # update history data every 4 hours
-    'history_updater': {
-        'task': 'thing.history_updater',
-        'schedule': timedelta(hours=4),
-        'options': {
-            'expires': 239 * 60,
-        },
-        'args': (),
-    },
-
-    # update price data every 30 minutes
-    'price_updater': {
-        'task': 'thing.price_updater',
-        'schedule': timedelta(minutes=30),
-        'options': {
-            'expires': 29 * 60,
-        },
-        'args': (),
-    },
-
-    # update unknown character/corporation names every hour
-    'fix-names': {
-        'task': 'thing.fix_names',
-        'schedule': timedelta(hours=1),
-        'options': {
-            'expires': 59 * 60,
-        },
-        'args': (),
-    },
-    # fix contracts that changed state after they went off Contract.xml
-    'fix_contracts': {
-        'task': 'thing.fix_contracts',
-        'schedule': timedelta(minutes=45),
-        'options': {
-            'queue': 'et_medium',
-        },
-        'args': (),
+            'queue': 'et_high'
+        }
     }
+    # OLD XML API TASKS
+    # # spawn tasks every 30 seconds
+    # 'task_spawner': {
+    #     'task': 'thing.task_spawner',
+    #     'schedule': timedelta(seconds=10),
+    #     'options': {
+    #         'expires': 9,
+    #         'queue': 'et_high',
+    #     },
+    #     'args': (),
+    # },
+    #
+    # # clean up various table messes every 5 minutes
+    # 'table_cleaner': {
+    #     'task': 'thing.table_cleaner',
+    #     'schedule': timedelta(minutes=5),
+    #     'options': {
+    #         'queue': 'et_high',
+    #     },
+    #     'args': (),
+    # },
+    #
+    # # update history data every 4 hours
+    # 'history_updater': {
+    #     'task': 'thing.history_updater',
+    #     'schedule': timedelta(hours=4),
+    #     'options': {
+    #         'expires': 239 * 60,
+    #     },
+    #     'args': (),
+    # },
+    #
+    # # update price data every 30 minutes
+    # 'price_updater': {
+    #     'task': 'thing.price_updater',
+    #     'schedule': timedelta(minutes=30),
+    #     'options': {
+    #         'expires': 29 * 60,
+    #     },
+    #     'args': (),
+    # },
+    #
+    # # update unknown character/corporation names every hour
+    # 'fix-names': {
+    #     'task': 'thing.fix_names',
+    #     'schedule': timedelta(hours=1),
+    #     'options': {
+    #         'expires': 59 * 60,
+    #     },
+    #     'args': (),
+    # },
+    # # fix contracts that changed state after they went off Contract.xml
+    # 'fix_contracts': {
+    #     'task': 'thing.fix_contracts',
+    #     'schedule': timedelta(minutes=45),
+    #     'options': {
+    #         'queue': 'et_medium',
+    #     },
+    #     'args': (),
+    # }
 }

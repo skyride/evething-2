@@ -226,20 +226,22 @@
                       <th>ID</th>
                       <th>Name</th>
                       <th>Status</th>
+                      <th>Last Updated:</th>
                       <th>Added</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
 
                   <tbody>
-                    {%- for esi_token in esi_tokens %}
+                    {%- for esi_token in esi_tokens.order_by('-status', 'name') %}
                     <tr>
                       <td><img class="img-responsive img-rounded" src="//image.eveonline.com/Character/{{ esi_token.characterID }}_64.jpg"></td>
-                      <td>{{ esi_token.characterID }}</td>
-                      <td>{{ esi_token.name }}</td>
-                      <td>{{ esi_token.status }}</td>
-                      <td>{{ esi_token.added }}</td>
-                      <td>
+                      <td style="vertical-align: middle;">{{ esi_token.characterID }}</td>
+                      <td style="vertical-align: middle;">{{ esi_token.name }}</td>
+                      <td style="vertical-align: middle;">{{ 'Active' if esi_token.status else 'Inactive' }}</td>
+                      <td style="vertical-align: middle;">{{ esi_token.last_updated }}</td>
+                      <td style="vertical-align: middle;">{{ esi_token.added }}</td>
+                      <td style="vertical-align: middle;">
                         <form method="GET" action="{{ url('thing.views.account_sso_delete') }}">
                           <input name="id" type="hidden" value="{{ esi_token.id }}" />
                           <button type="submit" class="btn btn-danger btn-sm">Delete</button>
