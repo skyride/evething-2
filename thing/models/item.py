@@ -24,6 +24,7 @@
 # ------------------------------------------------------------------------------
 
 from decimal import Decimal
+from datetime import datetime, timedelta
 
 from django.db import models
 from django.db.models import Sum
@@ -46,6 +47,8 @@ class Item(models.Model):
     base_price = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     sell_price = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     buy_price = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+
+    last_updated = models.DateTimeField(auto_now=True, default=datetime(0001, 1, 1, 1, 0))
 
     class Meta:
         app_label = 'thing'

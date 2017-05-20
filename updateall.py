@@ -15,4 +15,4 @@ task = ESI_CharacterInfo()
 
 for token in ESIToken.objects.all():
     print token.name
-    task.run(token.id)
+    task.delay(token.id)

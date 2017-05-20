@@ -36,7 +36,7 @@ class Implant(models.Model):
     WILLPOWER_ATTRIBUTE = 179
     IMPLANT_SLOT_ATTRIBUTE = 331
 
-    item = models.OneToOneField(Item, primary_key=True)
+    item = models.OneToOneField(Item, primary_key=True, related_name="implant")
 
     description = models.TextField()
 

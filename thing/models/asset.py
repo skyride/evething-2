@@ -42,7 +42,7 @@ class Asset(models.Model):
     system = models.ForeignKey(System, blank=True, null=True)
     station = models.ForeignKey(Station, blank=True, null=True)
 
-    item = models.ForeignKey(Item)
+    item = models.ForeignKey(Item, related_name="assets")
     name = models.CharField(max_length=128, default='')
     inv_flag = models.ForeignKey(InventoryFlag)
     quantity = models.IntegerField()

@@ -2,7 +2,7 @@ import json
 
 from thing.esi import ESI
 from thing.models import *
-from thing.tasks import ESI_CharacterInfo
+from thing.tasks.esi import *
 
 token = ESIToken.objects.get(name="Irn Bru AGBarr")
 api = ESI(token)
@@ -12,8 +12,10 @@ api = ESI(token)
 #print api.get("/characters/$id/clones")
 #print api.post("/characters/$id/cspa/", data={"characters": [93637573]})
 
-task = ESI_CharacterInfo()
-task.run(token.id)
+#task = ESI_CharacterInfo()
+#task.run(token.id)
+task = ESI_MarketUpdateSpawner()
+task.run()
 
 """for token in ESIToken.objects.all():
     print token.name

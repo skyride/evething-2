@@ -214,13 +214,24 @@ CELERY_QUEUES = (
 from datetime import timedelta
 
 CELERYBEAT_SCHEDULE = {
-    'esi_task_spawner': {
+    # Spawns character update tasks
+    'esi_character_update_spawner': {
         'task': 'thing.esi.character_update_spawner',
         'schedule': timedelta(seconds=10),
         'options': {
             'queue': 'et_high'
         }
+    },
+
+    # Spawns market update tasks
+    'esi_market_update_spawner': {
+        'task': 'thing.esi.market_update_spawner',
+        'schedule': timedelta(hours=1),
+        'options': {
+            'queue': 'et_high'
+        }
     }
+
     # OLD XML API TASKS
     # # spawn tasks every 30 seconds
     # 'task_spawner': {
