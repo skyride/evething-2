@@ -31,15 +31,17 @@ class ESI_MarketUpdateSpawner(APITask):
         ).all()
 
         # Generate market update tasks based on a paginated list
-        paginator = Paginator(items, 100)
-        task = ESI_MarketUpdateTask()
-        for i in paginator.page_range:
-            page = paginator.page(i)
-            type_ids = map(lambda x: x.id, page)
-            task.delay(type_ids)
+        if items.count() > 0:
+            paginator = Paginator(items, 100)
+            task = ESI_MarketUpdateTask()
+            for i in paginator.page_range:
+                page = paginator.page(i)
+                type_ids = map(lambda x: x.id, page)
+                task.delay(type_ids)
 
-
-        print "Market Update Spawner called for the update of %s items" % (items.count())
+            print "Market Update Spawner called for the update of %s items" % (items.count())
+        else:
+            print "No market prices to be updated"
 
 
 
