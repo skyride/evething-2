@@ -73,6 +73,8 @@ class Corporation(models.Model):
 
             if "alliance_id" in corporation:
                 db_corporation.alliance = Alliance.get_or_create(corporation['alliance_id'])
+            else:
+                db_corporation.alliance = None
 
             db_corporation.save()
 
@@ -83,7 +85,12 @@ class Corporation(models.Model):
                 api = ESI()
                 corporation = api.get("/corporations/%s/" % corporation_id)
                 db_corporation.name = corporation['corporation_name']
-                db_corporation.alliance = Alliance.get_or_create(corporation['alliance_id'])
+
+                if "alliance_id" in corporation:
+                    db_corporation.alliance = Alliance.get_or_create(corporation['alliance_id'])
+                else:
+                    db_corporation.alliance = None
+
                 db_corporation.save()
             return db_corporation
 
