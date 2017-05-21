@@ -259,7 +259,7 @@ ANON_KEY_CHOICES = 'abcdefghijklmnopqrstuvwxyz0123456789'
 
 @login_required
 def character_settings(request, character_name):
-    chars = Character.objects.filter(name=character_name, apikeys__user=request.user).distinct()
+    chars = Character.objects.filter(name=character_name, esitoken__user=request.user).distinct()
     if chars.count() == 0:
         raise Http404
     char = chars[0]
@@ -326,7 +326,7 @@ def character_skillplan(request, character_name, skillplan_id):
     # If the user is logged in, check if the character belongs to them
     if request.user.is_authenticated():
         try:
-            character = Character.objects.select_related('config', 'details').distinct().get(name=character_name, apikeys__user=request.user)
+            character = Character.objects.select_related('config', 'details').distinct().get(name=character_name, esitoken__user=request.user)
         except Character.DoesNotExist:
             pass
         else:
