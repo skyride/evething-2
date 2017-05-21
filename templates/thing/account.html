@@ -242,9 +242,9 @@
                       <td style="vertical-align: middle;">{{ esi_token.last_updated }}</td>
                       <td style="vertical-align: middle;">{{ esi_token.added }}</td>
                       <td style="vertical-align: middle;">
-                        <form method="GET" action="{{ url('thing.views.account_sso_delete') }}">
-                          <input name="id" type="hidden" value="{{ esi_token.id }}" />
-                          <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        <form>
+                          <a type="submit" class="btn btn-success btn-sm" href="{{ url('thing.views.account_esi_forceupdate') }}?id={{ esi_token.id }}">Force Update</a>
+                          <a type="submit" class="btn btn-danger btn-sm" href="{{ url('thing.views.account_esi_delete') }}?id={{ esi_token.id }}">Delete</a>
                         </form>
                       </td>
                     </tr>

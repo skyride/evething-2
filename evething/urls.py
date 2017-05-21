@@ -33,9 +33,11 @@ urlpatterns += patterns(
     (r'^account/skillplan/delete/$', 'account_skillplan_delete'),
     (r'^account/skillplan/edit/$', 'account_skillplan_edit'),
 
+    (r'^account/esi/update/$', 'account_esi_forceupdate'),
+    (r'^account/esi/delete/$', 'account_esi_delete'),
+
     (r'^account/sso/authorize/$', 'account_sso_authorize'),
     (r'^account/sso/callback/$', 'account_sso_callback'),
-    (r'^account/sso/delete/$', 'account_sso_delete'),
 
     (r'^assets/$', 'assets_summary'),
     (r'^assets/filter/$', 'assets_filter'),

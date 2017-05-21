@@ -161,7 +161,18 @@ def account_sso_callback(request):
 
 
 @login_required
-def account_sso_delete(request):
+def account_esi_forceupdate(request):
+    # Force update on this token
+    id = request.GET.get("id")
+    token = ESIToken.objects.get(id=id, user=request.user)
+    request.session['message_type'] = 'success'
+    request.session['message'] = "Forced an update job on character %s" % token.name
+    ESI_CharacterInfo().delay(token.id)
+    return redirect('%s#connectedcharacters' % (reverse(account)))
+
+
+@login_required
+def account_esi_delete(request):
     # Delete the key if it exists and is owned by this user
     id = request.GET.get("id")
     token = ESIToken.objects.get(id=id, user=request.user)
