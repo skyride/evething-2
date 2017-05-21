@@ -1,14 +1,6 @@
 {% extends "base.html" %}
 {% import 'macros/icons.html' as icons %}
 
-{% block extra_js %}
-    <script type="text/javascript">
-      $(document).ready(EVEthing.account.onload);
-      var account_edit_url = '{{ url('thing.views.account_apikey_edit') }}',
-          csrf = "{{ csrf() }}";
-    </script>
-{% endblock %}
-
 {% block title %}My Account{% endblock %}
 
 {% block content %}
@@ -357,64 +349,6 @@
               </form>
             </div>
             {%- endif %}
-
-            {# apikeys: purge modal -#}
-            <div class="modal fade" id="purge-apikey-modal" tabindex="-1" role="dialog" aria-labelledby="purge-apikey-modal" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <form action="{{ url('thing.views.account_apikey_purge') }}" method="POST" class="form-inline">
-                    {{ csrf() }}
-                    <input type="hidden" name="apikey_id" value="a" id="purge-keyid-input">
-                    <div class="modal-header">
-                      <a class="close" data-dismiss="modal">{{ icons.close_modal() }}</a>
-                      <h3 class="modal-title">Purge Confirmation</h3>
-                    </div>
-                    <div class="modal-body">
-                      <p>
-                        Are you sure you wish to purge API key #<strong><span id="purge-keyid"></span></strong> ("<span id="purge-keyname"></span>")?
-                        This will delete <strong>ALL</strong> data related to the characters referenced by this API key!
-                      </p>
-                      <div class="alert alert-danger">
-                        <strong>WARNING</strong>: this is permanent, the only way to recover historical data is from a database backup!
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button class="btn btn-danger" data-dismiss="modal">No</button>
-                      <button type="submit" class="btn btn-success">Yes</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-
-            {# apikeys: delete modal -#}
-            <div class="modal fade" id="delete-apikey-modal" tabindex="-1" role="dialog" aria-labelledby="delete-apikey-modal" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <form action="{{ url('thing.views.account_apikey_delete') }}" method="POST" class="form-inline">
-                    {{ csrf() }}
-                    <input type="hidden" name="apikey_id" value="a" id="delete-keyid-input">
-                    <div class="modal-header">
-                      <a class="close" data-dismiss="modal">{{ icons.close_modal() }}</a>
-                      <h3 class="modal-title">Delete Confirmation</h3>
-                    </div>
-                    <div class="modal-body">
-                      <p>
-                        Are you sure you wish to delete API key #<strong><span id="delete-keyid"></span></strong> ("<span id="delete-keyname"></span>")?
-                        This will unlink the associated characters from your account and any related data will no longer be visible to you!
-                      </p>
-                      <p>
-                        Note: you can regain access to the data later by re-adding this API key.
-                      </p>
-                    </div>
-                    <div class="modal-footer">
-                      <button class="btn btn-danger" data-dismiss="modal">No</button>
-                      <button type="submit" class="btn btn-success">Yes</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
 
             {# skillplan: edit modal -#}
             <div class="modal fade" id="edit-skillplan-modal" tabindex="-1" role="dialog" aria-labelledby="edit-skillplan-modal" aria-hidden="true">>

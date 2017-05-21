@@ -271,126 +271,126 @@ def account_settings(request):
     return redirect(account)
 
 
-@login_required
-def account_apikey_add(request):
-    """Add an API key"""
-    keyid = request.POST.get('keyid', '0')
-    vcode = request.POST.get('vcode', '').strip()
-    name = request.POST.get('name', '')
-    group_name = request.POST.get('group_name', '')
-
-    if not keyid.isdigit():
-        request.session['message_type'] = 'error'
-        request.session['message'] = 'KeyID is not an integer!'
-    elif int(keyid) < 1 or int(keyid) > 2 ** 31:
-        request.session['message_type'] = 'error'
-        request.session['message'] = 'Invalid KeyID!'
-    elif len(vcode) != 64:
-        request.session['message_type'] = 'error'
-        request.session['message'] = 'vCode must be 64 characters long!'
-    elif int(keyid) < get_minimum_keyid():
-        request.session['message_type'] = 'error'
-        request.session['message'] = 'This key was created more than 30 minutes ago, make a new one for each app!'
-    else:
-        if request.user.profile.can_add_keys is False:
-            request.session['message_type'] = 'error'
-            request.session['message'] = 'You are not allowed to add API keys!'
-
-        elif APIKey.objects.filter(user=request.user, keyid=request.POST.get('keyid', 0)).count():
-            request.session['message_type'] = 'error'
-            request.session['message'] = 'You already have an API key with that KeyID!'
-
-        else:
-            apikey = APIKey(
-                user_id=request.user.id,
-                keyid=keyid,
-                vcode=vcode,
-                name=name,
-                group_name=group_name,
-            )
-            apikey.save()
-
-            request.session['message_type'] = 'success'
-            request.session['message'] = 'API key added successfully!'
-
-    return redirect('%s#apikeys' % (reverse(account)))
-
-
-@login_required
-def account_apikey_delete(request):
-    """Delete an API key"""
-    apikey_id = request.POST.get('apikey_id', '')
-    if apikey_id.isdigit():
-        try:
-            apikey = APIKey.objects.get(user=request.user.id, id=apikey_id)
-
-        except APIKey.DoesNotExist:
-            request.session['message_type'] = 'error'
-            request.session['message'] = 'You do not have an API key with that KeyID!'
-
-        else:
-            request.session['message_type'] = 'success'
-            request.session['message'] = 'API key %s deleted successfully!' % (apikey.id)
-
-            apikey.delete()
-
-    else:
-        request.session['message_type'] = 'error'
-        request.session['message'] = 'You seem to be doing silly things, stop that.'
-
-    return redirect('%s#apikeys' % (reverse(account)))
-
-
-@login_required
-def account_apikey_edit(request):
-    """Edit an API key"""
-    try:
-        apikey = APIKey.objects.get(user=request.user.id, id=request.POST.get('apikey_id', '0'))
-
-    except APIKey.DoesNotExist:
-        request.session['message_type'] = 'error'
-        request.session['message'] = 'You do not have an API key with that KeyID!'
-    else:
-        request.session['message_type'] = 'success'
-        request.session['message'] = 'API key %s edited successfully!' % apikey.id
-
-        apikey_name = request.POST.get('name', '')
-        apikey_group_name = request.POST.get('group_name', '')
-        dont_edit = request.POST.get('dont_edit', '')
-
-        if apikey.name != apikey_name and dont_edit != 'name':
-            apikey.name = apikey_name
-            apikey.save()
-        elif apikey.group_name != apikey_group_name and dont_edit != 'group_name':
-            apikey.group_name = apikey_group_name
-            apikey.save()
-
-    return redirect('%s#apikeys' % (reverse(account)))
-
-
-@login_required
-def account_apikey_purge(request):
-    """Purge an API key's data"""
-    apikey_id = request.POST.get('apikey_id', '')
-    if apikey_id.isdigit():
-        try:
-            apikey = APIKey.objects.get(user=request.user.id, id=apikey_id)
-
-        except APIKey.DoesNotExist:
-            request.session['message_type'] = 'error'
-            request.session['message'] = 'You do not have an API key with that KeyID!'
-
-        else:
-            request.session['message_type'] = 'success'
-            request.session['message'] = 'API key %s purge queued successfully!' % (apikey.id)
-
-            apikey.purge_data()
-
-    else:
-        request.session['message_type'] = 'error'
-        request.session['message'] = 'You seem to be doing silly things, stop that.'
-
-    return redirect('%s#apikeys' % (reverse(account)))
+# @login_required
+# def account_apikey_add(request):
+#     """Add an API key"""
+#     keyid = request.POST.get('keyid', '0')
+#     vcode = request.POST.get('vcode', '').strip()
+#     name = request.POST.get('name', '')
+#     group_name = request.POST.get('group_name', '')
+#
+#     if not keyid.isdigit():
+#         request.session['message_type'] = 'error'
+#         request.session['message'] = 'KeyID is not an integer!'
+#     elif int(keyid) < 1 or int(keyid) > 2 ** 31:
+#         request.session['message_type'] = 'error'
+#         request.session['message'] = 'Invalid KeyID!'
+#     elif len(vcode) != 64:
+#         request.session['message_type'] = 'error'
+#         request.session['message'] = 'vCode must be 64 characters long!'
+#     elif int(keyid) < get_minimum_keyid():
+#         request.session['message_type'] = 'error'
+#         request.session['message'] = 'This key was created more than 30 minutes ago, make a new one for each app!'
+#     else:
+#         if request.user.profile.can_add_keys is False:
+#             request.session['message_type'] = 'error'
+#             request.session['message'] = 'You are not allowed to add API keys!'
+#
+#         elif APIKey.objects.filter(user=request.user, keyid=request.POST.get('keyid', 0)).count():
+#             request.session['message_type'] = 'error'
+#             request.session['message'] = 'You already have an API key with that KeyID!'
+#
+#         else:
+#             apikey = APIKey(
+#                 user_id=request.user.id,
+#                 keyid=keyid,
+#                 vcode=vcode,
+#                 name=name,
+#                 group_name=group_name,
+#             )
+#             apikey.save()
+#
+#             request.session['message_type'] = 'success'
+#             request.session['message'] = 'API key added successfully!'
+#
+#     return redirect('%s#apikeys' % (reverse(account)))
+#
+#
+# @login_required
+# def account_apikey_delete(request):
+#     """Delete an API key"""
+#     apikey_id = request.POST.get('apikey_id', '')
+#     if apikey_id.isdigit():
+#         try:
+#             apikey = APIKey.objects.get(user=request.user.id, id=apikey_id)
+#
+#         except APIKey.DoesNotExist:
+#             request.session['message_type'] = 'error'
+#             request.session['message'] = 'You do not have an API key with that KeyID!'
+#
+#         else:
+#             request.session['message_type'] = 'success'
+#             request.session['message'] = 'API key %s deleted successfully!' % (apikey.id)
+#
+#             apikey.delete()
+#
+#     else:
+#         request.session['message_type'] = 'error'
+#         request.session['message'] = 'You seem to be doing silly things, stop that.'
+#
+#     return redirect('%s#apikeys' % (reverse(account)))
+#
+#
+# @login_required
+# def account_apikey_edit(request):
+#     """Edit an API key"""
+#     try:
+#         apikey = APIKey.objects.get(user=request.user.id, id=request.POST.get('apikey_id', '0'))
+#
+#     except APIKey.DoesNotExist:
+#         request.session['message_type'] = 'error'
+#         request.session['message'] = 'You do not have an API key with that KeyID!'
+#     else:
+#         request.session['message_type'] = 'success'
+#         request.session['message'] = 'API key %s edited successfully!' % apikey.id
+#
+#         apikey_name = request.POST.get('name', '')
+#         apikey_group_name = request.POST.get('group_name', '')
+#         dont_edit = request.POST.get('dont_edit', '')
+#
+#         if apikey.name != apikey_name and dont_edit != 'name':
+#             apikey.name = apikey_name
+#             apikey.save()
+#         elif apikey.group_name != apikey_group_name and dont_edit != 'group_name':
+#             apikey.group_name = apikey_group_name
+#             apikey.save()
+#
+#     return redirect('%s#apikeys' % (reverse(account)))
+#
+#
+# @login_required
+# def account_apikey_purge(request):
+#     """Purge an API key's data"""
+#     apikey_id = request.POST.get('apikey_id', '')
+#     if apikey_id.isdigit():
+#         try:
+#             apikey = APIKey.objects.get(user=request.user.id, id=apikey_id)
+#
+#         except APIKey.DoesNotExist:
+#             request.session['message_type'] = 'error'
+#             request.session['message'] = 'You do not have an API key with that KeyID!'
+#
+#         else:
+#             request.session['message_type'] = 'success'
+#             request.session['message'] = 'API key %s purge queued successfully!' % (apikey.id)
+#
+#             apikey.purge_data()
+#
+#     else:
+#         request.session['message_type'] = 'error'
+#         request.session['message'] = 'You seem to be doing silly things, stop that.'
+#
+#     return redirect('%s#apikeys' % (reverse(account)))
 
 
 @login_required
