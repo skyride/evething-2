@@ -28,6 +28,8 @@ import urllib
 import requests
 import json
 
+from datetime import datetime
+
 from base64 import b64encode
 from cStringIO import StringIO
 
@@ -50,6 +52,8 @@ from thing.models import *  # NOPEP8
 from thing.stuff import *  # NOPEP8
 
 from evething import local_settings
+
+from thing.tasks import ESI_CharacterInfo
 
 
 @login_required
@@ -120,10 +124,11 @@ def account_sso_callback(request):
     token = json.loads(r.text)
 
     # Create the new token item
-    esi = ESIToken()
-    esi.user = request.user
-    esi.access_token = token['access_token']
-    esi.refresh_token = token['refresh_token']
+    esi = ESIToken(
+        user=request.user,
+        access_token=token['access_token'],
+        refresh_token=token['refresh_token']
+    )
 
     # Get the character info from ESI
     headers = { "Authorization": "Bearer %s" % esi.access_token }
@@ -148,6 +153,9 @@ def account_sso_callback(request):
     esi.name = verify['CharacterName']
     esi.token_type = verify['TokenType']
     esi.save()
+
+    # Call for an update on this token
+    ESI_CharacterInfo().delay(esi.id)
 
     return redirect('%s#connectedcharacters' % (reverse(account)))
 
