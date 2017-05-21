@@ -321,7 +321,7 @@
                       </div>
 
                       <div class="panel-body>">
-                        <table class="table table-stripled table-condensed table-hover" style="margin-bottom: 0;">
+                        <table class="table table-condensed table-hover" style="margin-bottom: 0;">
                           <tbody>
                           {% if clone.implants.all()|length > 0 %}
                             {% for implant in clone.implants.order_by('implant__implant_slot') %}
