@@ -2,6 +2,32 @@ EVEthing 2
 =========
 EVEthing 2 is a terribly named web application intended to ease the pain of managing your [EVE Online](http://www.eveonline.com/) space empire. Based on [EVEthing](https://github.com/madcowfred/evething), EVEthing 2 is major rewrite designed to use the new Swagger-based [ESI](https://community.eveonline.com/news/dev-blogs/introducing-esi/) API, replacing the deprecated [XML API](http://eveonline-third-party-documentation.readthedocs.io/en/latest/xmlapi/) that is set to be switched off on May 2018.
 
+New Features
+------------
+
+* Full support for Citadels/Engineering Complexes/etc
+* Jump Clones
+
+Missing Features
+----------------
+As ESI is still a work-in-progress, EVEthing 2 is currently missing some key features. These will be added as soon as possible, but the ball is entirely in CCP's court.
+
+* Contracts
+* Wallet Journal
+* Wallet Transactions
+* Current implants (affects training time calculations)
+* Character attributes (affects training time calculations)
+* Contents of a PI structure
+* Anything to do with Corporations
+
+
+Planned features
+----------------
+
+* Skill Planner
+
+
+
 Installation
 ------------
 There are some common requirements for any install method, these
@@ -54,6 +80,7 @@ EVEthing 2 has a much simplified celery task system.
 
 The current update script has a few deadlock conditions, so I'd avoid starting
 more than 4 worker threads. For an easy config, just run this command:
+
   `celery worker -A evething -B -c 4`
 
 Apache Install
@@ -65,7 +92,7 @@ You will need to install Apache and [mod_wsgi](http://code.google.com/p/modwsgi/
    files earlier.
 2. Make a 'static' sub-directory inside this directory.
 3. Add a vhost to your Apache config with these extra directives:
-   ```apache
+   ```
   Alias /static/ /www/whatever/static/
 
   <Directory /www/whatever>
