@@ -36,9 +36,8 @@ def pi(request):
     tt = TimerThing('pi')
 
     characters = Character.objects.filter(
-        apikeys__user=request.user,
-        apikeys__valid=True,
-        apikeys__key_type__in=[APIKey.ACCOUNT_TYPE, APIKey.CHARACTER_TYPE]
+        esitoken__user=request.user,
+        esitoken__status=True
     ).distinct().select_related('colony_set')
 
     pi_map = {}

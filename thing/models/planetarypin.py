@@ -37,14 +37,14 @@ class Pin(models.Model):
     colony = models.ForeignKey(Colony)
 
     type = models.ForeignKey(Item, related_name='+')
-    schematic = models.IntegerField()
+    schematic = models.IntegerField(default=0)
 
-    cycle_time = models.IntegerField()
-    quantity_per_cycle = models.IntegerField()
+    cycle_time = models.IntegerField(default=0)
+    quantity_per_cycle = models.IntegerField(default=0)
 
-    installed = models.DateTimeField()
-    expires = models.DateTimeField()
-    last_launched = models.DateTimeField()
+    installed = models.DateTimeField(default=datetime(0001, 1, 1, 1, 0))
+    expires = models.DateTimeField(default=datetime(0001, 1, 1, 1, 0))
+    last_launched = models.DateTimeField(default=datetime(0001, 1, 1, 1, 0))
 
     content_size = models.DecimalField(max_digits=16, decimal_places=4, default=0)
 

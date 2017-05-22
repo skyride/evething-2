@@ -2,7 +2,7 @@ import json
 
 from datetime import datetime, timedelta
 
-from django.db import transaction
+from django import db
 from django.db.models import Sum, F, FloatField
 
 from .apitask import APITask
@@ -10,17 +10,14 @@ from .mail_fetch_task import ESI_MailFetchTask
 
 from thing.esi_enums import *
 from thing.esi import ESI
-from thing.models import Character, CharacterConfig, CharacterDetails, Item, System, Station, \
-                         CharacterSkill, SkillQueue, Corporation, Faction, FactionStanding, \
-                         CorporationStanding, Asset, System, InventoryFlag, AssetSummary, \
-                         IndustryJob, MarketOrder, Clone, CloneImplant, MailMessage
+from thing.models import *
 
 # This task effectively replaces the characterInfo and characterSheet calls
 class ESI_CharacterInfo(APITask):
     name = "thing.esi.character_info"
     api = None
 
-    @transaction.atomic
+    @db.transaction.atomic
     def run(self, token_id):
         self.api = self.get_api(token_id)
 
@@ -350,6 +347,59 @@ class ESI_CharacterInfo(APITask):
             mail_task = ESI_MailFetchTask()
             for mail in mails:
                 mail_task.delay(token_id, mail)
+
+
+        ## PI
+        planets = self.api.get("/characters/$id/planets/")
+
+        # Delete colonies that no longer exist
+        planet_map = map(lambda x: x['planet_id'], planets)
+        Colony.objects.filter(character=character).exclude(planet_id__in=planet_map).delete()
+
+        for planet in planets:
+            db_planet = Colony.objects.filter(character=character, planet_id=planet['planet_id'])
+            if len(db_planet) == 1:
+                db_planet = db_planet[0]
+            else:
+                db_planet = Colony(
+                    character=character,
+                    system_id=planet['solar_system_id'],
+                    planet_id=planet['planet_id'],
+                    planet=self.api.get("/universe/planets/%s/" % planet['planet_id'])['name'],
+                    planet_type=planet['planet_type'],
+                    last_update=self.parse_api_date(planet['last_update']),
+                    level=planet['upgrade_level'],
+                    pins=planet['num_pins']
+                )
+            db_planet.save()
+
+            # Get planet details
+            details = self.api.get("/characters/$id/planets/%s/" % planet['planet_id'])
+
+            # Delete the pins that no longer exist
+            pin_map = map(lambda x: x['pin_id'], details['pins'])
+            Pin.objects.filter(colony=db_planet).exclude(pin_id__in=pin_map).delete()
+
+            for pin in details['pins']:
+                db_pin = Pin.objects.filter(pin_id=pin['pin_id'])
+                if len(db_pin) == 1:
+                    db_pin = db_pin[0]
+                else:
+                    db_pin = Pin(
+                        pin_id=pin['pin_id'],
+                        colony=db_planet,
+                        type_id=pin['type_id']
+                    )
+
+                if "schematic_id" in pin:
+                    db_pin.schematic = pin['schematic_id']
+                if "extractor_details" in pin:
+                    db_pin.cycle_time = pin['extractor_details']['cycle_time']
+                    db_pin.quantity_per_cycle = pin['extractor_details']['qty_per_cycle']
+                    db_pin.installed = self.parse_api_date(pin['install_time'])
+                    db_pin.expires = self.parse_api_date(pin['expiry_time'])
+
+                db_pin.save()
 
 
         character.esitoken.save()
