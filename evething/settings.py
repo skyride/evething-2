@@ -163,6 +163,7 @@ THEMES = [
     ('cosmo', 'Cosmo'),
     ('cyborg', 'Cyborg'),
     ('slate', 'Slate'),
+    ('solar', 'Solar'),
 ]
 
 # Jingo setup

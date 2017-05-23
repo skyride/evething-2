@@ -96,7 +96,8 @@ module.exports = function (grunt) {
             },
             themes: {
                 files: {
-		    'static/css/theme-flatly.min.css': 'static/less/theme-flatly/bootstrap.less',
+                    'static/css/theme-flatly.min.css': 'static/less/theme-flatly/bootstrap.less',
+                    'static/css/theme-solar.min.css': 'static/less/theme-solar/bootstrap.less',
                     'static/css/theme-cerulean.min.css': 'static/less/theme-cerulean/bootstrap.less',
                     'static/css/theme-yeti.min.css': 'static/less/theme-yeti/bootstrap.less',
                     'static/css/theme-cosmo.min.css': 'static/less/theme-cosmo/bootstrap.less',
