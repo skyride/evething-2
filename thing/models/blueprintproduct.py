@@ -32,7 +32,7 @@ from thing.models.industryjob import IndustryJob
 
 class BlueprintProduct(models.Model):
     """Blueprint products"""
-    blueprint = models.ForeignKey(Blueprint)
+    blueprint = models.OneToOneField(Blueprint, related_name="product")
 
     activity = models.IntegerField(choices=IndustryJob.ACTIVITY_CHOICES)
     item = models.ForeignKey(Item, db_constraint=False)

@@ -96,7 +96,8 @@ def industry(request):
         {
             'incomplete': incomplete,
             'complete': complete,
-            'user': request.user
+            'user': request.user,
+            
         },
         request,
         character_ids,

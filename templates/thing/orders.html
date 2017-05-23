@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block content %}
+      {% set show_item_icons = user.profile.show_item_icons -%}
       {% if char_orders %}
       <div class="row">
         <div class="col-sm-8">
@@ -99,6 +100,9 @@
                   {%- endif %}
                 </td>
                 <td>
+                  {% if show_item_icons -%}
+                  <img src="//image.eveonline.com/Type/{{ order.item.id }}_32.png" height="18" width="18"> 
+                  {%- endif %}
                   <a href="{{ url('thing.views.transactions') }}?ft=item&fc=eq&fv={{ order.item.name }}">{{ order.item.name }}</a>
                 </td>
                 <td class="r">{{ order.volume_remaining|humanize }}</td>

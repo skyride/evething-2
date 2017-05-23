@@ -8,10 +8,11 @@
 {% block title %}Industry Jobs{% endblock %}
 
 {% block content %}
+      {% set show_item_icons = user.profile.show_item_icons -%}
       <div class="row">
         <div class="col-sm-12">
           <h2>Industry Jobs</h2>
-          
+
           <ul class="nav nav-tabs">
             <li class="active"><a href="#tab_incomplete" data-toggle="tab">Incomplete</a></li>
             <li><a href="#tab_complete" data-toggle="tab">Complete</a></li>
@@ -65,7 +66,16 @@
                         {%- endif %}
                       </td>
                       <td>{{ job.get_activity_display() }}</td>
-                      <td>{{ job.blueprint }}</td>
+                      <td>
+                        {% if show_item_icons -%}
+                          {% if job.activity == 1 %}
+                          <img src="//image.eveonline.com/Type/{{ job.blueprint.product.item.id }}_32.png" height="24" width="24">
+                          {% else %}
+                          <img src="//image.eveonline.com/Type/{{ job.blueprint.id }}_32.png" height="24" width="24">
+                          {% endif %}
+                        {%- endif %}
+                        {{ job.blueprint }}
+                      </td>
                       <td class="industry-runs">{{ job.runs|commas }}</td>
                       <td class="journal-date">{{ job.start_date }}</td>
                       <td class="journal-date">{{ job.end_date }}</td>
@@ -130,7 +140,16 @@
                         {%- endif %}
                       </td>
                       <td>{{ job.get_activity_display() }}</td>
-                      <td>{{ job.product }}</td>
+                      <td>
+                        {% if show_item_icons -%}
+                          {% if job.activity == 1 %}
+                          <img src="//image.eveonline.com/Type/{{ job.blueprint.product.item.id }}_32.png" height="24" width="24">
+                          {% else %}
+                          <img src="//image.eveonline.com/Type/{{ job.blueprint.id }}_32.png" height="24" width="24">
+                          {% endif %}
+                        {%- endif %}
+                        {{ job.product }}
+                      </td>
                       <td class="industry-runs">{{ job.runs|commas }}</td>
                       <td class="journal-date">{{ job.start_date }}</td>
                       <td class="journal-date">{{ job.end_date }}</td>
