@@ -68,7 +68,7 @@ def account(request):
 
     profile = request.user.profile
 
-    characters = Character.objects.filter(apikeys__user=request.user).distinct()
+    characters = Character.objects.filter(esitoken__user=request.user).distinct()
     home_hide_characters = set(int(c) for c in profile.home_hide_characters.split(',') if c)
 
     return render_page(
