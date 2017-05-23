@@ -1,11 +1,11 @@
-@etWarningBackground:   rgb(253, 248, 236);
-@etErrorBackground:     #f9f0f2;
-@etSuccessBackground:   rgb(240, 247, 234);
+@etWarningBackground:   darken(rgb(253, 248, 236), 2%);
+@etErrorBackground:     darken(#f9f0f2, 2%);
+@etSuccessBackground:   darken(rgb(240, 247, 234), 2%);
 @etInfoBackground:      @alert-info-border;
 
-@etWarningBorder:       lighten(#ae894a, 30%);
-@etErrorBorder:         lighten(#a94442, 40%);
-@etSuccessBorder:       lighten(#3c763d, 40%);
+@etWarningBorder:       darken(@etWarningBackground, 3%);
+@etErrorBorder:         darken(@etErrorBackground, 3%);
+@etSuccessBorder:       darken(@etSuccessBackground, 3%);
 @etInfoBorder:          @alert-info-text;
 
 @white: #fff;
