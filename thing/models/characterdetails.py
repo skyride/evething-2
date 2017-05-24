@@ -40,6 +40,8 @@ class CharacterDetails(models.Model):
         max_digits=18, decimal_places=2, default=0
     )
 
+    plex_balance = models.IntegerField(default=0)
+
     cha_attribute = models.SmallIntegerField(default=20)
     int_attribute = models.SmallIntegerField(default=20)
     mem_attribute = models.SmallIntegerField(default=20)

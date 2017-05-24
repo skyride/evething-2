@@ -59,6 +59,8 @@ class ESI_CharacterInfo(APITask):
         # Populate the database
         balance = float((wallet for wallet in wallets if wallet['wallet_id'] == 1000).next()['balance']) / 100
         charDetails.wallet_balance = balance
+        charDetails.plex_balance = (wallet for wallet in wallets if wallet['wallet_id'] == 1200).next()['balance']
+
         # Lmao ESI doesn't have character attributes yet
         charDetails.cha_attribute = 1
         charDetails.int_attribute = 1

@@ -4,7 +4,7 @@ from thing.esi import ESI
 from thing.models import *
 from thing.tasks.esi import *
 
-token = ESIToken.objects.get(name="Irn Bru AGBarr")
+token = ESIToken.objects.get(name="Jean Ahrire")
 api = ESI(token)
 #api._refresh_access_token()
 #print api.get("/characters/93417038/assets/")
@@ -12,8 +12,8 @@ api = ESI(token)
 #print api.get("/characters/$id/clones")
 #print api.post("/characters/$id/cspa/", data={"characters": [93637573]})
 
-#task = ESI_CharacterInfo()
-#task.run(token.id)
+task = ESI_CharacterInfo()
+task.run(token.id)
 #task = ESI_MarketUpdateSpawner()
 #task = ESI_AllianceUpdateTask()
 #task.run()
