@@ -232,6 +232,15 @@ CELERYBEAT_SCHEDULE = {
         'options': {
             'queue': 'et_high'
         }
+    },
+
+    # Server Status
+    'esi_server_status': {
+        'task': 'thing.esi.server_status',
+        'schedule': timedelta(minutes=5),
+        'options': {
+            'queue': 'et_high'
+        }
     }
 
     # OLD XML API TASKS

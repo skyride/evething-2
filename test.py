@@ -12,11 +12,12 @@ api = ESI(token)
 #print api.get("/characters/$id/clones")
 #print api.post("/characters/$id/cspa/", data={"characters": [93637573]})
 
-task = ESI_CharacterInfo()
-task.run(token.id)
+#task = ESI_CharacterInfo()
+#task.run(token.id)
 #task = ESI_MarketUpdateSpawner()
 #task = ESI_AllianceUpdateTask()
 #task.run()
+ESI_ServerStatus().run()
 
 #print Alliance.get_or_create(386292982)
 

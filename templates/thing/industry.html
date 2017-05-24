@@ -69,7 +69,7 @@
                       <td>
                         {% if show_item_icons -%}
                           {% if job.activity == 1 %}
-                          <img src="//image.eveonline.com/Type/{{ job.blueprint.product.item.id }}_32.png" height="24" width="24">
+                          <img src="//image.eveonline.com/Type/{{ job.blueprint.product.first().item.id }}_32.png" height="24" width="24">
                           {% else %}
                           <img src="//image.eveonline.com/Type/{{ job.blueprint.id }}_32.png" height="24" width="24">
                           {% endif %}
@@ -143,7 +143,7 @@
                       <td>
                         {% if show_item_icons -%}
                           {% if job.activity == 1 %}
-                          <img src="//image.eveonline.com/Type/{{ job.blueprint.product.item.id }}_32.png" height="24" width="24">
+                          <img src="//image.eveonline.com/Type/{{ job.blueprint.product.first().item.id }}_32.png" height="24" width="24">
                           {% else %}
                           <img src="//image.eveonline.com/Type/{{ job.blueprint.id }}_32.png" height="24" width="24">
                           {% endif %}

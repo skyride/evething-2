@@ -27,6 +27,7 @@ from thing.models.implant import Implant
 
 # ESI
 from thing.models.esitoken import ESIToken
+from thing.models.serverstatus import ServerStatus
 
 # Everything else
 from thing.models.apikey import APIKey
