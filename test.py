@@ -17,7 +17,7 @@ api = ESI(token)
 #task = ESI_MarketUpdateSpawner()
 #task = ESI_AllianceUpdateTask()
 #task.run()
-ESI_ServerStatus().run()
+#ESI_ServerStatus().run()
 
 #print Alliance.get_or_create(386292982)
 

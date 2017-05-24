@@ -37,6 +37,7 @@ class CharacterConfig(models.Model):
     show_skill_queue = models.BooleanField(default=False)
     show_standings = models.BooleanField(default=False)
     show_wallet = models.BooleanField(default=False)
+    show_jumpclones = models.BooleanField(default=False)
     anon_key = models.CharField(max_length=16, default='')
 
     class Meta:

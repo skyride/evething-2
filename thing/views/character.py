@@ -83,6 +83,7 @@ def character_common(request, char, public=True, anonymous=False):
         'queue': anonymous or not public or char.config.show_skill_queue,
         'standings': not anonymous and (not public or char.config.show_standings),
         'wallet': not anonymous and (not public or char.config.show_wallet),
+        'jump_clones': not anonymous and (not public or char.config.show_jumpclones)
     }
 
     # Retrieve skill queue
@@ -269,6 +270,7 @@ def character_settings(request, character_name):
     char.config.show_skill_queue = ('queue' in request.POST)
     char.config.show_standings = ('standings' in request.POST)
     char.config.show_wallet = ('wallet' in request.POST)
+    char.config.show_jumpclones = ('jumpclones' in request.POST)
 
     # User wants to enable anonymous key
     if 'anon-key-toggle' in request.POST:

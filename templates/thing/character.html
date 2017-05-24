@@ -71,9 +71,16 @@
                 </label>
                 <label class="checkbox indent">
                   <input type="checkbox" class="disable-toggle" name="wallet"{% if char.config.show_wallet %} checked{% endif %}>
-                  Wallet balance
+                  Wallet Balance
                   <div class="pull-right">
                     <span class="fa fa-info-sign" rel="tooltip" title="Show wallet balance on public sheet"></span>
+                  </div>
+                </label>
+                <label class="checkbox indent">
+                  <input type="checkbox" class="disable-toggle" name="jumpclones"{% if char.config.show_jumpclones %} checked{% endif %}>
+                  Jump Clones
+                  <div class="pull-right">
+                    <span class="fa fa-info-sign" rel="tooltip" title="Show jump clones on public sheet"></span>
                   </div>
                 </label>
                 <label class="checkbox">
@@ -267,7 +274,7 @@
 
             <ul class="nav nav-tabs" id="tabs">
               <li class="active"><a href="#tab_skills" data-toggle="tab">Skills</a></li>
-              {% if char.clones.all()|length > 0 %}<li><a href="#tab_clones" data-toggle="tab">Jump Clones</a></li>{% endif %}
+              {% if char.clones.all()|length > 0 and show.jump_clones %}<li><a href="#tab_clones" data-toggle="tab">Jump Clones</a></li>{% endif %}
               {% if show.standings %}<li><a href="#tab_standings" data-toggle="tab">Standings</a></li>{% endif %}
             </ul>
             <br/>
@@ -300,7 +307,7 @@
                 {%- endfor %}
               </div>
 
-              {% if char.clones.all()|length > 0 %}
+              {% if char.clones.all()|length > 0 and show.jump_clones %}
               <div class="tab-pane" id="tab_clones">
                 <div class="row">
                   <div class="col-sm-12">
