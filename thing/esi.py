@@ -38,7 +38,7 @@ class ESI():
         # If we got a 403 error its an invalid token, try to refresh the token and try again
         if r.status_code == 403:
             if self._refresh_access_token():
-                r = method(full_url, data=data, headers=self._bearer_header())
+                r = method(full_url, data=data, headers=self._bearer_header(), retries=retries+1)
             else:
                 return None
 
