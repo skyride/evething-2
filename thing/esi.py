@@ -3,6 +3,8 @@ import json
 
 from base64 import b64encode
 
+from django.core.cache import cache
+
 from thing.models.esitoken import ESIToken
 from evething import local_settings
 
@@ -14,6 +16,8 @@ class ESI():
     client_id = local_settings.ESI_CLIENT_ID
     secret_key = local_settings.ESI_SECRET_KEY
     token = None
+
+    cache_time = 30
 
 
     # Wrapper for GET
@@ -29,6 +33,19 @@ class ESI():
         # Do replacements
         full_url = self._replacements(url)
 
+        # Check the cache for a response
+        if self.token == None:
+            cache_key = full_url
+        else:
+            cache_key = "%s:%s" % (self.token.access_token, full_url)
+        r = cache.get(cache_key)
+        if r != None:
+            r = json.loads(r)
+            if r == None:
+                return None
+            else:
+                return r
+
         # Try request
         full_url = "%s%s?datasource=%s" % (self.url, full_url, self.datasource)
         if debug:
@@ -41,6 +58,7 @@ class ESI():
                 r = method(full_url, data=data, headers=self._bearer_header())
                 # If the status code is still 403 then we fail the request
                 if r.status_code == 403:
+                    cache.set(cache_key, json.dumps(None), self.cache_time)
                     return None
             else:
                 return None
@@ -50,12 +68,16 @@ class ESI():
             if retries < local_settings.ESI_RETRIES:
                 return self.request(url, data=data, method=method, retries=retries+1)
             else:
+                cache.set(cache_key, json.dumps(None), self.cache_time)
                 return None
 
         # Load json and return
         if r.status_code == 200:
-            return json.loads(r.text)
+            j = json.loads(r.text)
+            cache.set(cache_key, r.text, self.cache_time)
+            return j
         else:
+            cache.set(cache_key, json.dumps(None), self.cache_time)
             return None
 
 
