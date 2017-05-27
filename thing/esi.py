@@ -2,6 +2,8 @@ import requests
 import json
 
 from base64 import b64encode
+from urllib import urlencode
+from hashlib import sha256
 
 from django.core.cache import cache
 
@@ -17,27 +19,30 @@ class ESI():
     secret_key = local_settings.ESI_SECRET_KEY
     token = None
 
-    cache_time = 30
-
 
     # Wrapper for GET
-    def get(self, url, data=None, debug=local_settings.DEBUG):
-        return self.request(url, data=data, method=requests.get, debug=debug)
+    def get(self, url, data=None, get_vars={}, cache_time=30, debug=local_settings.DEBUG):
+        return self.request(url, data=data, method=requests.get, get_vars=get_vars, cache_time=cache_time, debug=debug)
 
     # Wrapper for POST
-    def post(self, url, data=None, debug=local_settings.DEBUG):
-        return self.request(url, data=data, method=requests.post, debug=debug)
+    def post(self, url, data=None, get_vars={}, cache_time=30, debug=local_settings.DEBUG):
+        return self.request(url, data=data, method=requests.post, get_vars=get_vars, cache_time=30, debug=debug)
 
 
-    def request(self, url, data=None, method=requests.get, retries=0, debug=local_settings.DEBUG):
+    def request(self, url, data=None, method=requests.get, retries=0, get_vars={}, cache_time=30, debug=local_settings.DEBUG):
         # Do replacements
         full_url = self._replacements(url)
 
+        # Try request
+        full_url = "%s%s?%s" % (self.url, full_url, self._get_variables(get_vars))
+        if debug:
+            print full_url
+
         # Check the cache for a response
         if self.token == None:
-            cache_key = full_url
+            cache_key = sha256("%s:%s:%s" % (str(method), full_url, json.dumps(data))).hexdigest()
         else:
-            cache_key = "%s:%s" % (self.token.access_token, full_url)
+            cache_key = sha256("%s:%s:%s:%s" % (str(method), self.token.access_token, full_url, json.dumps(data))).hexdigest()
         r = cache.get(cache_key)
         if r != None:
             r = json.loads(r)
@@ -46,10 +51,7 @@ class ESI():
             else:
                 return r
 
-        # Try request
-        full_url = "%s%s?datasource=%s" % (self.url, full_url, self.datasource)
-        if debug:
-            print full_url
+        # Nope, no cache, hit the API
         r = method(full_url, data=data, headers=self._bearer_header())
 
         # If we got a 403 error its an invalid token, try to refresh the token and try again
@@ -58,7 +60,7 @@ class ESI():
                 r = method(full_url, data=data, headers=self._bearer_header())
                 # If the status code is still 403 then we fail the request
                 if r.status_code == 403:
-                    cache.set(cache_key, json.dumps(None), self.cache_time)
+                    cache.set(cache_key, json.dumps(None), cache_time)
                     return None
             else:
                 return None
@@ -68,16 +70,16 @@ class ESI():
             if retries < local_settings.ESI_RETRIES:
                 return self.request(url, data=data, method=method, retries=retries+1)
             else:
-                cache.set(cache_key, json.dumps(None), self.cache_time)
+                cache.set(cache_key, json.dumps(None), cache_time)
                 return None
 
         # Load json and return
         if r.status_code == 200:
             j = json.loads(r.text)
-            cache.set(cache_key, r.text, self.cache_time)
+            cache.set(cache_key, r.text, cache_time)
             return j
         else:
-            cache.set(cache_key, json.dumps(None), self.cache_time)
+            cache.set(cache_key, json.dumps(None), cache_time)
             return None
 
 
@@ -102,6 +104,11 @@ class ESI():
                 "Authorization": "Bearer %s" % self.token.access_token
             }
         return headers
+
+
+    def _get_variables(self, get_vars):
+        get_vars['datasource'] = self.datasource
+        return urlencode(get_vars)
 
 
     # Refreshes the access token using the refresh token
