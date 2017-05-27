@@ -65,6 +65,7 @@ urlpatterns += patterns(
     (r'^mail/json/body/(?P<message_id>\d+)/$', 'mail_json_body'),
     (r'^mail/json/headers/$', 'mail_json_headers'),
     (r'^mail/mark_read/$', 'mail_mark_read'),
+    (r'^mail/character/search/(?P<query>[\w\- ]+)/$', 'character_search'),
 
     (r'^orders/$', 'orders'),
 

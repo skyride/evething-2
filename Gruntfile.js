@@ -58,7 +58,9 @@ module.exports = function (grunt) {
                     'static/js/bootstrap/tab.js',
                     'static/js/bootstrap/scrollspy.js',
                     'static/js/bootstrap/affix.js',
-                    'static/js/bootstrap-datepicker.js'
+                    'static/js/bootstrap-datepicker.js',
+                    'static/js/typeahead.bundle.js',
+                    'static/js/bootstrap3-typeahead.js'
                 ],
                 dest: 'static/js/bootstrap.js'
             }

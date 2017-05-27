@@ -16,6 +16,10 @@
 
 {% block content %}
       <br/>
+      <!--<button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#mail-send-modal">
+        Open Mail Send Modal
+      </button>-->
+
       <div id="mail-side" class="mail-side col-sm-3 col-lg-2">
         <div class="well well-sm">
           <button type="button" id="mail-mark-read-button" class="btn btn-success">Mark as read <span class="fa fa-chevron-right"></span></button>
@@ -103,4 +107,42 @@
           </div>{# row #}
         </div>{# mail-content #}
       </div>{# mail-main #}
+
+      <div id="mail-send-modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">Send Mail</h4>
+            </div>
+            <div class="modal-body">
+              <form class="nomargin">
+                <fieldset>
+                  <div class="col-md-5">
+                    <div class="row">
+                      <label>From:</label>
+                      <select id="mail-sender" class="form-control">
+                        <option value="123" selected>Capri Sun KraftFoods</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-md-offset-1 col-md-6">
+                    <div class="row">
+                      <label>To:</label>
+                      <input type="text" id="mail-recipient" class="form-control typeahead">
+                    </div>
+                  </div>
+
+                  <textarea id="mail-body" rows="8" class="form-control"></textarea>
+                </fieldset>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success">Send</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Delete</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
 {% endblock %}

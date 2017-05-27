@@ -23,12 +23,16 @@
 # OF SUCH DAMAGE.
 # ------------------------------------------------------------------------------
 
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
 from core.util import json_response
 from thing.models import *  # NOPEP8
 from thing.stuff import render_page, flush_cache
+
+from thing.esi import ESI
 
 
 @login_required
@@ -53,6 +57,32 @@ def mail(request):
         request,
         [c[0] for c in characters],
     )
+
+
+@login_required
+def character_search(request, query):
+    api = ESI()
+
+    data = {
+        "search": query,
+        "categories": "character",
+        "strict": "false"
+    }
+    r = api.get("/search/", get_vars=data, cache_time=600)
+
+    if "character" not in r:
+        return json_response([])
+
+    data = json.dumps(r['character'][:20])
+    chars = api.post("/universe/names/", data=data, cache_time=600)
+    out = []
+    for char in chars:
+        out.append({
+            "id": char['id'],
+            "name": char['name']
+        })
+
+    return json_response(out)
 
 
 @login_required
