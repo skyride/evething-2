@@ -40,7 +40,7 @@
           </div>
 
           <div class="panel-body">
-            {% for clone in station.clones.filter() %}
+            {% for clone in station.clones.filter(character__esitoken__user=user) %}
             <div class="row">
               <div class="col-xs-12 col-sm-3 col-lg-2">
                 <img src="//image.eveonline.com/Character/{{ clone.character.id }}_128.jpg">
