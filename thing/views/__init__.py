@@ -6,6 +6,7 @@ from thing.views.account import *
 from thing.views.assets import *
 from thing.views.blueprints import *
 from thing.views.character import *
+from thing.views.clones import *
 from thing.views.contracts import *
 from thing.views.events import *
 from thing.views.industry import *

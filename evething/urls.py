@@ -38,6 +38,8 @@ urlpatterns += patterns(
     (r'^assets/$', 'assets_summary'),
     (r'^assets/filter/$', 'assets_filter'),
 
+    (r'^clones/$', 'clones_home'),
+
     url(r'^blueprints/$', 'blueprints', name='blueprints'),
     (r'^blueprints/add/$', 'blueprints_add'),
     (r'^blueprints/del/$', 'blueprints_del'),

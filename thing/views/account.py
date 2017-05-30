@@ -229,6 +229,7 @@ def account_settings(request):
 
     profile.show_clock = (request.POST.get('show_clock', '') == 'on')
     profile.show_assets = (request.POST.get('show_assets', '') == 'on')
+    profile.show_clones = (request.POST.get('show_clones', '') == 'on')
     profile.show_blueprints = (request.POST.get('show_blueprints', '') == 'on')
     profile.show_contracts = (request.POST.get('show_contracts', '') == 'on')
     profile.show_industry = (request.POST.get('show_industry', '') == 'on')

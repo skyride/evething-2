@@ -49,6 +49,7 @@ class UserProfile(models.Model):
     theme = models.CharField(max_length=32, default='default')
     show_clock = models.BooleanField(default=True)
     show_assets = models.BooleanField(default=True)
+    show_clones = models.BooleanField(default=True)
     show_blueprints = models.BooleanField(default=True)
     show_contracts = models.BooleanField(default=True)
     show_industry = models.BooleanField(default=True)

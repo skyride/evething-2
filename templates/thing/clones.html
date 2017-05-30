@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% import 'macros/common.html' as common %}
+
+{% block title %}Clones{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+  //window.addEventListener("hashchange", function() { scrollBy(0, -110) })
+</script>
+{% endblock %}
+
+
+{% block content %}
+  <h2>Jump Clones</h2>
+
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <strong>Stations</strong>
+        </div>
+
+        <ul class="list-group" id="sidenav">
+          {% for station in stations %}
+          <li class="list-group-item">
+            <a href="#station-{{ station.id }}">{{ station.name }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-sm-9">
+      {% for station in stations %}
+      <div id="station-{{ station.id }}" class="station">
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <strong>{{ station.name }}</strong>
+          </div>
+
+          <div class="panel-body">
+            {% for clone in station.clones.filter() %}
+            <div class="row">
+              <div class="col-xs-12 col-sm-3 col-lg-2">
+                <img src="//image.eveonline.com/Character/{{ clone.character.id }}_128.jpg">
+              </div>
+
+              <div class="col-xs-12 col-sm-9 col-lg-10">
+                <h4>{{ clone.character.name }}{% if clone.name != "" %} - {{ clone.name }}{% endif %}</h4>
+                <table class="table table-striped table-bordered table-condensed">
+                  <thead>
+                    <tr class="c">
+                      <th>Implant</th>
+                      <th>Cost</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {% if clone.implants.count() > 0 %}
+                      {% for implant in clone.implants.all() %}
+                      <tr>
+                        <td class="col-sm-9">
+                          <img src="//image.eveonline.com/Type/{{ implant.implant.item.id }}_32.png">
+                          {{ implant.implant.item.name }}
+                        </td>
+                        <td class="col-sm-3">{{ implant.implant.item.sell_price|commas }}</td>
+                      </tr>
+                      {% endfor %}
+                      <tr>
+                        <td></td>
+                        <td><strong>{{ clone.get_implants_value()|commas }}</strong></td>
+                      </tr>
+                    {% else %}
+                    <tr>
+                      <td><i>No Implants</i></td>
+                      <td class="col-sm-1">&nbsp;</td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+              {% if not loop.last %}
+              <hr />
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
