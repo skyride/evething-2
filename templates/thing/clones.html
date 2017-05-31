@@ -58,7 +58,7 @@
 
                   <tbody>
                     {% if clone.implants.count() > 0 %}
-                      {% for implant in clone.implants.all() %}
+                      {% for implant in clone.implants.order_by('implant__implant_slot') %}
                       <tr>
                         <td class="col-sm-9">
                           <img src="//image.eveonline.com/Type/{{ implant.implant.item.id }}_32.png">
