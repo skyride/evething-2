@@ -14,7 +14,7 @@
   {% set show_item_icons = user.profile.show_item_icons -%}
   <h2>Jump Clones</h2>
 
-  <div class="row">
+  <div class="row clones">
     <div class="col-sm-3">
       <div class="panel panel-default">
         <div class="panel-heading">
@@ -61,7 +61,7 @@
                     {% if clone.implants.count() > 0 %}
                       {% for implant in clone.implants.order_by('implant__implant_slot') %}
                       <tr>
-                        <td class="col-sm-9">
+                        <td class="col-sm-9 implant">
                           {% if show_item_icons %}
                           <img src="//image.eveonline.com/Type/{{ implant.implant.item.id }}_32.png">
                           {% endif %}
