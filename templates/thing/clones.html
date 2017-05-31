@@ -11,6 +11,7 @@
 
 
 {% block content %}
+  {% set show_item_icons = user.profile.show_item_icons -%}
   <h2>Jump Clones</h2>
 
   <div class="row">
@@ -61,7 +62,9 @@
                       {% for implant in clone.implants.order_by('implant__implant_slot') %}
                       <tr>
                         <td class="col-sm-9">
+                          {% if show_item_icons %}
                           <img src="//image.eveonline.com/Type/{{ implant.implant.item.id }}_32.png">
+                          {% endif %}
                           {{ implant.implant.item.name }}
                         </td>
                         <td class="col-sm-3">{{ implant.implant.item.sell_price|commas }}</td>
