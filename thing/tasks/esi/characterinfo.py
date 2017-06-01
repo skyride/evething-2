@@ -348,7 +348,7 @@ class ESI_CharacterInfo(APITask):
 
             mail_task = ESI_MailFetchTask()
             for mail in mails:
-                mail_task.delay(token_id, mail)
+                mail_task.apply_async(args=[token_id, mail], countdown=30)
 
 
         ## PI
@@ -404,6 +404,8 @@ class ESI_CharacterInfo(APITask):
                 db_pin.save()
 
 
+        # If we reach this far the token is active again
+        character.esitoken.status = True
         character.esitoken.save()
         print "Finished updating %s:%s" % (character.id, character.name)
 
