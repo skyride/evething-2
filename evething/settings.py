@@ -186,6 +186,11 @@ STAGGER_APITASK_STARTUP = True
 # to local_settings.
 PRICE_URL = 'http://goonmetrics.com/api/price_data/?station_id=60003760&type_id=%s'
 
+# load local settings
+from local_settings import *  # NOPEP8
+MANAGERS = ADMINS
+TEMPLATE_DEBUG = DEBUG
+
 ESI_SCOPES = [
     "esi-location.read_location.v1",
     "esi-location.read_ship_type.v1",
@@ -210,11 +215,6 @@ ESI_SCOPES = [
     "esi-characters.read_blueprints.v1",
     "esi-contracts.read_character_contracts.v1"
 ]
-
-# load local settings
-from local_settings import *  # NOPEP8
-MANAGERS = ADMINS
-TEMPLATE_DEBUG = DEBUG
 
 # Rename the default queue
 from kombu import Exchange, Queue

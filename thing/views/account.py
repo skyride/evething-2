@@ -51,8 +51,6 @@ from thing.forms import UploadSkillPlanForm
 from thing.models import *  # NOPEP8
 from thing.stuff import *  # NOPEP8
 
-from evething import local_settings
-
 from thing.tasks import ESI_CharacterInfo
 
 
@@ -105,16 +103,16 @@ def account_sso_callback(request):
         sso_authorize_url = "https://login.eveonline.com/oauth/authorize?type=%s&response_type=%s&redirect_uri=%s&client_id=%s&scope=%s&scope=%s" % (\
             "web_server",
             "code",
-            urllib.quote_plus(local_settings.ESI_CALLBACK_URL),
-            local_settings.ESI_CLIENT_ID,
-            urllib.quote_plus(" ".join(local_settings.ESI_SCOPES)),
+            urllib.quote_plus(settings.ESI_CALLBACK_URL),
+            settings.ESI_CLIENT_ID,
+            urllib.quote_plus(" ".join(settings.ESI_SCOPES)),
             "urgaypwned"
         )
         return redirect(sso_authorize_url)
 
     code = request.GET.get("code")
 
-    auth = "Basic %s" % b64encode("%s:%s" % (local_settings.ESI_CLIENT_ID, local_settings.ESI_SECRET_KEY))
+    auth = "Basic %s" % b64encode("%s:%s" % (settings.ESI_CLIENT_ID, settings.ESI_SECRET_KEY))
     headers = { "Authorization": auth }
     data = {
         "grant_type": "authorization_code",
