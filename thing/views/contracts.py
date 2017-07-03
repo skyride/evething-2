@@ -33,9 +33,8 @@ from thing.stuff import *  # NOPEP8
 def contracts(request):
     """Contracts"""
     character_ids = list(Character.objects.filter(
-        apikeys__user=request.user.id,
-        apikeys__valid=True,
-        apikeys__key_type__in=[APIKey.ACCOUNT_TYPE, APIKey.CHARACTER_TYPE]
+        esitoken__user=request.user.id,
+        esitoken__status=True
     ).distinct().values_list(
         'id',
         flat=True,
