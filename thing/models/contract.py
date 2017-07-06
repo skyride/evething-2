@@ -126,7 +126,7 @@ class Contract(models.Model):
                 self.name = "Empty Item Exchange"
             elif item_count == 1:
                 item = self.items.filter(included=True).first()
-                self.name = "%s x %s" % (item.name, item.quantity)
+                self.name = "%s x %s" % (item.item.name, item.quantity)
             else:
                 self.name = "[Multiple Items]"
 
