@@ -25,16 +25,17 @@
 
 from django.db import models
 
-from thing.models.item import Item
+from thing.models import Item, Contract
 
 
 class ContractItem(models.Model):
     """Contract items"""
-    contract_id = models.IntegerField(db_index=True)
+    id = models.BigIntegerField(primary_key=True)
+    contract = models.ForeignKey(Contract)
     item = models.ForeignKey(Item, related_name='contract_items')
 
     quantity = models.IntegerField()
-    raw_quantity = models.IntegerField()
+    raw_quantity = models.IntegerField(null=True, default=None)
     singleton = models.BooleanField(default=False)
     included = models.BooleanField(default=False)
 

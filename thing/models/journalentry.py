@@ -47,7 +47,7 @@ class JournalEntry(models.Model):
     owner2_id = models.IntegerField(default=0)
 
     arg_name = models.CharField(max_length=128, default="")
-    arg_id = models.BigIntegerField(default="")
+    arg_id = models.BigIntegerField(default=0)
 
     amount = models.DecimalField(max_digits=14, decimal_places=2)
     balance = models.DecimalField(max_digits=17, decimal_places=2)
