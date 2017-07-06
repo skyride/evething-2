@@ -73,6 +73,22 @@
         <td><strong>Volume</strong></td>
         <td>{{ contract.volume|commas }} m3</td>
       </tr>
+      <tr>
+        <td><strong>Date Issued</strong></td>
+        <td>{{ contract.date_issued }}</td>
+      </tr>
+      {% if contract.date_accepted != None %}
+      <tr>
+        <td><strong>Date Accepted</strong></td>
+        <td>{{ contract.date_accepted }}</td>
+      </tr>
+      {% endif %}
+      {% if contract.date_completed != None %}
+      <tr>
+        <td><strong>Date Completed</strong></td>
+        <td>{{ contract.date_completed }}</td>
+      </tr>
+      {% endif %}
     </table>
     <hr />
 
