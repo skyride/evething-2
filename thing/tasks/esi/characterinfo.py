@@ -21,9 +21,9 @@ class ESI_CharacterInfo(APITask):
     def run(self, token_id):
         self.api = self.get_api(token_id)
 
-        # Try for wallets to test our access
-        wallets = self.api.get("/characters/$id/wallets/")
-        if wallets == None:
+        # Try for wallet to test our access
+        wallet = self.api.get("/characters/$id/wallet/")
+        if wallet == None:
             return None
 
         ## Character Data
@@ -57,9 +57,9 @@ class ESI_CharacterInfo(APITask):
         ship = self.api.get("/characters/$id/ship/")
 
         # Populate the database
-        balance = float((wallet for wallet in wallets if wallet['wallet_id'] == 1000).next()['balance']) / 100
+        balance = float(wallet)
         charDetails.wallet_balance = balance
-        charDetails.plex_balance = (wallet for wallet in wallets if wallet['wallet_id'] == 1200).next()['balance']
+        charDetails.plex_balance = 0
 
         # Get character attributes
         attributes = self.api.get("/characters/$id/attributes/")
