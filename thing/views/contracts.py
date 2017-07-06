@@ -123,3 +123,33 @@ def contracts(request):
         character_ids,
         corporation_ids,
     )
+
+
+
+@login_required
+def contracts_view(request, contract_id):
+    contract = Contract.objects.get(contract_id=contract_id)
+    items = contract.items.filter(
+        included=True
+    ).prefetch_related(
+        'item',
+        'item__item_group',
+        'item__item_group__category'
+    )
+    wants = contract.items.filter(
+        included=False
+    ).prefetch_related(
+        'item',
+        'item__item_group',
+        'item__item_group__category'
+    )
+
+    return render_page(
+        'thing/contract.html',
+        {
+            "contract": contract,
+            "wants": wants,
+            "items": items
+        },
+        request
+    )

@@ -57,7 +57,8 @@ urlpatterns += patterns(
     (r'^character_anon/(?P<anon_key>[a-z0-9]+)/mastery/', 'character_anonymous_mastery'),
     (r'^character_anon/(?P<anon_key>[a-z0-9]+)/skillplan/(?P<skillplan_id>\d+)$', 'character_anonymous_skillplan'),
 
-    (r'^contracts/', 'contracts'),
+    (r'^contracts/$', 'contracts'),
+    (r'^contracts/(?P<contract_id>[a-z0-9]+)/$', 'contracts_view'),
 
     (r'^events/$', 'events'),
 

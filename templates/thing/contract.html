@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% import 'macros/icons.html' as icons %}
+
+{% set show_item_icons = user.profile.show_item_icons %}
+
+{% block title %}Contracts{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+      $(document).ready(function () {
+        // call the tablesorter plugin
+        $("table").tablesorter({
+          widgets: ['uitheme', 'filter'],
+          theme: 'bootstrap',
+          widthFixed: true,
+          headerTemplate : '{content} {icon}'
+        });
+      });
+    </script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <p></p>
+
+  <div class="">
+    <h3>{{ contract.name }} ({{ contract.type }})</h3>
+
+    <table class="table">
+      <tr>
+        <td class="col-sm-2"><strong>Info by Issuer</strong></td>
+        <td>(None)</td>
+      </tr>
+      <tr>
+        <td><strong>Type</strong></td>
+        <td>{{ contract.type }}</td>
+      </tr>
+      <tr>
+        <td><strong>Issued By</strong></td>
+        {% if contract.for_corp %}
+        <td><span class="fa fa-group"></span> {{ contract.issuer_corp.name }} (by <span class="fa fa-user"></span> {{ contract.issuer_char.name }})</td>
+        {% else %}
+        <td><span class="fa fa-user"></span> {{ contract.issuer_char.name }}</td>
+        {% endif %}
+      </tr>
+      <tr>
+        <td><strong>Availability</strong></td>
+        <td>
+          {% if contract.assignee_id == 1203670151 %}
+          <span class="fa fa-globe"></span> Public
+          {% else %}
+          Private - <span class="fa {{ contract.availability().fa }}"></span> {{ contract.availability().name }}
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Contractor</strong></td>
+        <td>
+          {% if contract.acceptor_id == 0 %}
+          --
+          {% else %}
+          <span class="fa {{ contract.contractor().fa }}"></span> {{ contract.contractor().name }}
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Location</strong></td>
+        <td>
+          {{ contract.start_station.name }}
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Volume</strong></td>
+        <td>{{ contract.volume|commas }} m3</td>
+      </tr>
+    </table>
+    <hr />
+
+    {% if contract.type in ["Item Exchange", "Auction"] %}
+    <table class="table">
+      <tr>
+        <td class="col-sm-2"><strong>Buyer Will Pay</strong></td>
+        <td><strong>
+          {{ contract.price|commas }} ISK
+        </strong></td>
+      </tr>
+    </table>
+
+    {% if wants.count() > 0 %}
+    <strong>Seller Wants:</strong>
+    <table id="contract-wants" class="table table-striped table-hover">
+      <thead>
+        <th>Name</th>
+        <th>Qty</th>
+        <th>Type</th>
+        <th>Category</th>
+      </thead>
+
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td style="padding-top: 0px; padding-bottom: 0px;">
+            {% if show_item_icons %}
+            <img src="//image.eveonline.com/Type/{{ item.item_id }}_32.png">
+            {% endif %}
+            {{ item.item.name }}
+          </td>
+          <td>
+            {{ item.quantity }}
+          </td>
+          <td>
+            {{ item.item.item_group.name }}
+          </td>
+          <td>
+            {{ item.item.item_group.category.name }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+    <hr />
+
+    <table id="contract-items" class="table table-striped table-hover">
+      <thead>
+        <th>Name</th>
+        <th>Qty</th>
+        <th>Type</th>
+        <th>Category</th>
+      </thead>
+
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td style="padding-top: 0px; padding-bottom: 0px;">
+            {% if show_item_icons %}
+            <img src="//image.eveonline.com/Type/{{ item.item_id }}_32.png">
+            {% endif %}
+            {{ item.item.name }}
+          </td>
+          <td>
+            {{ item.quantity }}
+          </td>
+          <td>
+            {{ item.item.item_group.name }}
+          </td>
+          <td>
+            {{ item.item.item_group.category.name }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

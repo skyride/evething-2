@@ -31,13 +31,13 @@ from thing.models import Item, Contract
 class ContractItem(models.Model):
     """Contract items"""
     id = models.BigIntegerField(primary_key=True)
-    contract = models.ForeignKey(Contract)
+    contract = models.ForeignKey(Contract, related_name="items")
     item = models.ForeignKey(Item, related_name='contract_items')
 
     quantity = models.IntegerField()
     raw_quantity = models.IntegerField(null=True, default=None)
     singleton = models.BooleanField(default=False)
-    included = models.BooleanField(default=False)
+    included = models.BooleanField(default=False, db_index=True)
 
     class Meta:
         app_label = 'thing'
