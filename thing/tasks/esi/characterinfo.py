@@ -426,74 +426,74 @@ class ESI_CharacterInfo(APITask):
 
 
         # Contracts
-        #try:
-        contracts = self.api.get("/characters/$id/contracts/")
+        try:
+            contracts = self.api.get("/characters/$id/contracts/")
 
-        for contract in contracts:
-            db_contract = Contract.objects.filter(contract_id=contract['contract_id'])
-            if len(db_contract) > 0:
-                db_contract = db_contract[0]
-            else:
-                db_contract = Contract(
-                    character=character,
-                    contract_id=contract['contract_id']
-                )
-
-            # Update info
-            if "issuer_id" in contract:
-                db_contract.issuer_char = Character.get_or_create(contract['issuer_id'])
-            db_contract.issuer_corp = Corporation.get_or_create(contract['issuer_corporation_id'])
-            db_contract.assignee_id = contract['assignee_id']
-            db_contract.acceptor_id = contract['acceptor_id']
-
-            db_contract.start_station = Station.get_or_create(contract['start_location_id'], self.api)
-            db_contract.end_station = Station.get_or_create(contract['end_location_id'], self.api)
-
-            db_contract.type = self.contract_types[contract['type']]
-            db_contract.status = self.contract_states[contract['status']]
-            db_contract.title = contract['title']
-            db_contract.for_corp = contract['for_corporation']
-            if contract['availability'] == "public":
-                db_contract.public = True
-
-            db_contract.date_issued = self.parse_api_date(contract['date_issued'])
-            db_contract.date_expired = self.parse_api_date(contract['date_expired'])
-            if "date_accepted" in contract:
-                db_contract.date_accepted = self.parse_api_date(contract['date_accepted'])
-            if "date_completed" in contract:
-                db_contract.date_completed = self.parse_api_date(contract['date_completed'])
-            db_contract.num_days = contract['days_to_complete']
-
-            db_contract.price = contract['price']
-            db_contract.reward = contract['reward']
-            db_contract.collateral = contract['collateral']
-            if "buyout" in contract:
-                db_contract.buyout = contract['buyout']
-            db_contract.volume = contract['volume']
-
-            db_contract.save()
-
-            # Items
-            if not db_contract.retrieved_items:
-                items = self.api.get("/characters/$id/contracts/%s/items" % contract['contract_id'])
-                for item in items:
-                    db_item = ContractItem(
-                        id=item['record_id'],
-                        contract=db_contract,
-                        item_id=item['type_id'],
-                        quantity=item['quantity'],
-                        singleton=item['is_singleton'],
-                        included=item['is_included']
+            for contract in contracts:
+                db_contract = Contract.objects.filter(contract_id=contract['contract_id'])
+                if len(db_contract) > 0:
+                    db_contract = db_contract[0]
+                else:
+                    db_contract = Contract(
+                        character=character,
+                        contract_id=contract['contract_id']
                     )
-                    if "raw_quantity" in item:
-                        db_item.raw_quantity = item['raw_quantity']
-                    db_item.save()
 
-                db_contract.retrieved_items = True
+                # Update info
+                if "issuer_id" in contract:
+                    db_contract.issuer_char = Character.get_or_create(contract['issuer_id'])
+                db_contract.issuer_corp = Corporation.get_or_create(contract['issuer_corporation_id'])
+                db_contract.assignee_id = contract['assignee_id']
+                db_contract.acceptor_id = contract['acceptor_id']
+
+                db_contract.start_station = Station.get_or_create(contract['start_location_id'], self.api)
+                db_contract.end_station = Station.get_or_create(contract['end_location_id'], self.api)
+
+                db_contract.type = self.contract_types[contract['type']]
+                db_contract.status = self.contract_states[contract['status']]
+                db_contract.title = contract['title']
+                db_contract.for_corp = contract['for_corporation']
+                if contract['availability'] == "public":
+                    db_contract.public = True
+
+                db_contract.date_issued = self.parse_api_date(contract['date_issued'])
+                db_contract.date_expired = self.parse_api_date(contract['date_expired'])
+                if "date_accepted" in contract:
+                    db_contract.date_accepted = self.parse_api_date(contract['date_accepted'])
+                if "date_completed" in contract:
+                    db_contract.date_completed = self.parse_api_date(contract['date_completed'])
+                db_contract.num_days = contract['days_to_complete']
+
+                db_contract.price = contract['price']
+                db_contract.reward = contract['reward']
+                db_contract.collateral = contract['collateral']
+                if "buyout" in contract:
+                    db_contract.buyout = contract['buyout']
+                db_contract.volume = contract['volume']
+
                 db_contract.save()
-        #except Exception:
+
+                # Items
+                if not db_contract.retrieved_items:
+                    items = self.api.get("/characters/$id/contracts/%s/items" % contract['contract_id'])
+                    for item in items:
+                        db_item = ContractItem(
+                            id=item['record_id'],
+                            contract=db_contract,
+                            item_id=item['type_id'],
+                            quantity=item['quantity'],
+                            singleton=item['is_singleton'],
+                            included=item['is_included']
+                        )
+                        if "raw_quantity" in item:
+                            db_item.raw_quantity = item['raw_quantity']
+                        db_item.save()
+
+                    db_contract.retrieved_items = True
+                    db_contract.save()
+        except Exception:
             # This character hasn't been re-added for contracts
-            #pass
+            pass
 
 
         # If we reach this far the token is active again
