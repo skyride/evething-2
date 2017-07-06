@@ -43,18 +43,18 @@ class JournalEntry(models.Model):
     ref_id = models.BigIntegerField(db_index=True)
     ref_type = models.ForeignKey(RefType)
 
-    owner1_id = models.IntegerField()
-    owner2_id = models.IntegerField()
+    owner1_id = models.IntegerField(default=0)
+    owner2_id = models.IntegerField(default=0)
 
-    arg_name = models.CharField(max_length=128)
-    arg_id = models.BigIntegerField()
+    arg_name = models.CharField(max_length=128, default="")
+    arg_id = models.BigIntegerField(default="")
 
     amount = models.DecimalField(max_digits=14, decimal_places=2)
     balance = models.DecimalField(max_digits=17, decimal_places=2)
-    reason = models.CharField(max_length=255)
+    reason = models.CharField(max_length=255, default="")
 
     tax_corp = models.ForeignKey(Corporation, null=True, blank=True)
-    tax_amount = models.DecimalField(max_digits=14, decimal_places=2)
+    tax_amount = models.DecimalField(max_digits=14, decimal_places=2, default=0)
 
     class Meta:
         app_label = 'thing'

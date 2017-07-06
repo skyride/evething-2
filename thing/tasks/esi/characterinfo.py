@@ -57,8 +57,7 @@ class ESI_CharacterInfo(APITask):
         ship = self.api.get("/characters/$id/ship/")
 
         # Populate the database
-        balance = float(wallet)
-        charDetails.wallet_balance = balance
+        charDetails.wallet_balance = float(wallet)
         charDetails.plex_balance = 0
 
         # Get character attributes
@@ -80,6 +79,33 @@ class ESI_CharacterInfo(APITask):
         charConfig.save()
         self.api.token.character = character
         self.api.token.save()
+
+
+        ## Wallet Journal
+        # journal = self.api.get("/characters/$id/wallet/journal/")
+        # for entry in journal:
+        #     db_entry = JournalEntry.objects.filter(character=character, ref_id=entry['ref_id'])
+        #     if len(db_entry) == 0:
+        #         db_entry = JournalEntry(
+        #             character=character,
+        #             date=self.parse_api_date(entry['date']),
+        #             ref_id=entry['ref_id'],
+        #             ref_type=RefType.objects.get(id=JournalReferenceEnum[entry['ref_type']].value)
+        #         )
+        #
+        #         if db_entry.ref_type_id == 19:
+        #             db_entry.owner1_id = character.id
+        #             db_entry.owner2_id = 1000132
+        #         else:
+        #             if "first_party_id" in entry:
+        #                 db_entry.owner1_id = entry['first_party_id']
+        #             if "second_party_id" in entry:
+        #                 db_entry.owner2_id = entry['second_party_id']
+        #
+        #         db_entry.amount = entry['amount']
+        #         db_entry.balance = entry['balance']
+        #         if "reason" in entry:
+        #             db_entry.reason = entry['reason']
 
 
         ## Skills
