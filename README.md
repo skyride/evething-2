@@ -92,7 +92,7 @@ You will need to install Apache and [mod_wsgi](http://code.google.com/p/modwsgi/
    files earlier.
 2. Make a 'static' sub-directory inside this directory.
 3. Add a vhost to your Apache config with these extra directives:
-   ```
+  ```
   Alias /static/ /www/whatever/static/
 
   <Directory /www/whatever>
