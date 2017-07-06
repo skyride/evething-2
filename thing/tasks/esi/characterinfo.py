@@ -61,12 +61,13 @@ class ESI_CharacterInfo(APITask):
         charDetails.wallet_balance = balance
         charDetails.plex_balance = (wallet for wallet in wallets if wallet['wallet_id'] == 1200).next()['balance']
 
-        # Lmao ESI doesn't have character attributes yet
-        charDetails.cha_attribute = 1
-        charDetails.int_attribute = 1
-        charDetails.mem_attribute = 1
-        charDetails.per_attribute = 1
-        charDetails.wil_attribute = 1
+        # Get character attributes
+        attributes = self.api.get("/characters/$id/attributes/")
+        charDetails.cha_attribute = attributes['charisma']
+        charDetails.int_attribute = attributes['intelligence']
+        charDetails.mem_attribute = attributes['memory']
+        charDetails.per_attribute = attributes['perception']
+        charDetails.wil_attribute = attributes['willpower']
 
         charDetails.security_status = public['security_status']
         charDetails.last_known_location = self.last_known_location(location)
