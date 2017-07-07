@@ -128,7 +128,10 @@ def contracts(request):
 
 @login_required
 def contracts_view(request, contract_id):
-    contract = Contract.objects.get(contract_id=contract_id)
+    contract = Contract.objects.get(
+        character__esitoken__user=request.user,
+        contract_id=contract_id
+    )
     items = contract.items.filter(
         included=True
     ).prefetch_related(
