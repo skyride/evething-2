@@ -197,3 +197,4 @@ class PersonalLocationFlagEnum(Enum):
     FighterTube2 = 161
     FighterTube3 = 162
     FighterTube4 = 163
+    SubSystemBay = 177
