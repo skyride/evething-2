@@ -500,6 +500,19 @@ class ESI_CharacterInfo(APITask):
             pass
 
 
+        ## Implants
+        try:
+            implants = self.api.get("/characters/$id/implants/")
+
+            charDetails.implants.clear()
+            for implant in implants:
+                charDetails.implants.add(implant)
+
+        except Exception:
+            # This character hasn't been re-added since 24/08/17
+            pass
+
+
         # If we reach this far the token is active again
         character.esitoken.status = True
         character.esitoken.save()
