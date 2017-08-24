@@ -227,6 +227,12 @@ def character_common(request, char, public=True, anonymous=False):
         faction_standings = []
         corp_standings = []
 
+    # Icons
+    if request.user.id != None:
+        show_item_icons = request.user.profile.show_item_icons
+    else:
+        show_item_icons = True
+
     # Render template
     out = render_page(
         'thing/character.html',
@@ -243,7 +249,8 @@ def character_common(request, char, public=True, anonymous=False):
             'public_plans': public_plans,
             'faction_standings': faction_standings,
             'corp_standings': corp_standings,
-            'user': request.user
+            'user': request.user,
+            'show_item_icons': show_item_icons
         },
         request,
     )
