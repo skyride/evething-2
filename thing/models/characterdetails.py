@@ -92,6 +92,10 @@ class CharacterDetails(models.Model):
     ship_item = models.ForeignKey(Item, blank=True, null=True)
     ship_name = models.CharField(max_length=128, default='')
 
+    # Fatigue
+    last_jump_date = models.DateTimeField(null=True, default=None)
+    fatigue_expire_date = models.DateTimeField(null=True, default=None)
+
     class Meta:
         app_label = 'thing'
 

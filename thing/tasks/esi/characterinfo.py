@@ -490,7 +490,11 @@ class ESI_CharacterInfo(APITask):
 
         ## Fatigue
         try:
-            
+            fatigue = self.api.get("/characters/$id/fatigue/")
+
+            charDetails.last_jump_date = self.parse_api_date(fatigue['last_jump_date'])
+            charDetails.fatigue_expire_date = self.parse_api_date(fatigue['jump_fatigue_expire_date'])
+            charDetails.save()
         except Exception:
             # This character hasn't been re-added since 24/08/17
             pass
