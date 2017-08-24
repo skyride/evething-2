@@ -21,11 +21,6 @@ class ESI_CharacterInfo(APITask):
     def run(self, token_id):
         self.api = self.get_api(token_id)
 
-        # Try for wallet to test our access
-        wallet = self.api.get("/characters/$id/wallet/")
-        if wallet == None:
-            return None
-
         ## Character Data
         characterID = self.api.token.characterID
         public = self.api.get("/characters/$id/")
@@ -52,9 +47,9 @@ class ESI_CharacterInfo(APITask):
 
 
         # Perform the rest of the calls
-        #clones = self.api.get("/characters/$id/clones/")
         location = self.api.get("/characters/$id/location/")
         ship = self.api.get("/characters/$id/ship/")
+        wallet = self.api.get("/characters/$id/wallet/")
 
         # Populate the database
         charDetails.wallet_balance = float(wallet)
@@ -80,6 +75,24 @@ class ESI_CharacterInfo(APITask):
         self.api.token.character = character
         self.api.token.save()
 
+        clones = self.api.get("/characters/$id/clones/")
+        # Delete existing clones
+        Clone.objects.filter(character=character).delete()
+        if "jump_clones" in clones:
+            for clone in clones['jump_clones']:
+                db_clone = Clone(
+                    character=character,
+                    location=Station.get_or_create(clone['location_id'], self.api)
+                )
+                db_clone.save()
+
+                if "implants" in clone:
+                    for implant_id in clone['implants']:
+                        db_implant = CloneImplant(
+                            clone=db_clone,
+                            implant_id=implant_id
+                        )
+                        db_implant.save()
 
         ## Wallet Journal
         # journal = self.api.get("/characters/$id/wallet/journal/")
@@ -336,27 +349,6 @@ class ESI_CharacterInfo(APITask):
             db_order.save()
 
 
-        ## Clones
-        clones = self.api.get("/characters/$id/clones/")
-        # Delete existing clones
-        Clone.objects.filter(character=character).delete()
-        if "jump_clones" in clones:
-            for clone in clones['jump_clones']:
-                db_clone = Clone(
-                    character=character,
-                    location=Station.get_or_create(clone['location_id'], self.api)
-                )
-                db_clone.save()
-
-                if "implants" in clone:
-                    for implant_id in clone['implants']:
-                        db_implant = CloneImplant(
-                            clone=db_clone,
-                            implant_id=implant_id
-                        )
-                        db_implant.save()
-
-
         ## Mails
         mails = self.api.get("/characters/$id/mail/")
 
@@ -425,7 +417,7 @@ class ESI_CharacterInfo(APITask):
                 db_pin.save()
 
 
-        # Contracts
+        ## Contracts
         try:
             contracts = self.api.get("/characters/$id/contracts/")
 
@@ -493,6 +485,14 @@ class ESI_CharacterInfo(APITask):
                     db_contract.save()
         except Exception:
             # This character hasn't been re-added for contracts
+            pass
+
+
+        ## Fatigue
+        try:
+            
+        except Exception:
+            # This character hasn't been re-added since 24/08/17
             pass
 
 

@@ -14,13 +14,11 @@ class ESI_CharacterUpdateSpawner(APITask):
 
     def run(self):
         # Generate async update tasks for any ESI Token that hasn't been updated recently
-        task = ESI_CharacterInfo()
-
         tokens = ESIToken.objects.filter(
             status=True,
             last_updated__lte=datetime.now() - timedelta(minutes=local_settings.ESI_UPDATE_INTERVAL)
         )
         for token in tokens:
-            task.delay(token.id)
+            ESI_CharacterInfo().delay(token.id)
             print "Queued token update for token id %s" % token.id
             token.save()
