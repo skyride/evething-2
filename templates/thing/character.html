@@ -217,27 +217,27 @@
                   <tr class="r">
                     <td><strong>Int:</strong></td>
                     <td>{{ char.details.int_attribute }}</td>
-                    <!-- <td>({% if show.implants %}+{{ char.details.int_bonus }}{% else %}??{% endif %})</td> -->
+                    <td>({% if show.implants %}+{{ char.details.int_bonus }}{% else %}??{% endif %})</td>
                   </tr>
                   <tr class="r">
                     <td><strong>Mem:</strong></td>
                     <td>{{ char.details.mem_attribute }}</td>
-                    <!-- <td>({% if show.implants %}+{{ char.details.mem_bonus }}{% else %}??{% endif %})</td> -->
+                    <td>({% if show.implants %}+{{ char.details.mem_bonus }}{% else %}??{% endif %})</td>
                   </tr>
                   <tr class="r">
                     <td><strong>Per:</strong></td>
                     <td>{{ char.details.per_attribute }}</td>
-                    <!-- <td>({% if show.implants %}+{{ char.details.per_bonus }}{% else %}??{% endif %})</td> -->
+                    <td>({% if show.implants %}+{{ char.details.per_bonus }}{% else %}??{% endif %})</td>
                   </tr>
                   <tr class="r">
                     <td><strong>Wil:</strong></td>
                     <td>{{ char.details.wil_attribute }}</td>
-                    <!-- <td>({% if show.implants %}+{{ char.details.wil_bonus }}{% else %}??{% endif %})</td> -->
+                    <td>({% if show.implants %}+{{ char.details.wil_bonus }}{% else %}??{% endif %})</td>
                   </tr>
                   <tr class="r">
                     <td><strong>Cha:</strong></td>
                     <td>{{ char.details.cha_attribute }}</td>
-                    <!-- <td>({% if show.implants %}+{{ char.details.cha_bonus }}{% else %}??{% endif %})</td> -->
+                    <td>({% if show.implants %}+{{ char.details.cha_bonus }}{% else %}??{% endif %})</td>
                   </tr>
                 </table>
                 <br>
@@ -276,6 +276,7 @@
 
             <ul class="nav nav-tabs" id="tabs">
               <li class="active"><a href="#tab_skills" data-toggle="tab">Skills</a></li>
+              {% if char.details.implants.all()|length > 0 and show.implants %}<li><a href="#tab_implants" data-toggle="tab">Implants</a></li>{% endif %}
               {% if char.clones.all()|length > 0 and show.jump_clones %}<li><a href="#tab_clones" data-toggle="tab">Jump Clones</a></li>{% endif %}
               {% if show.standings %}<li><a href="#tab_standings" data-toggle="tab">Standings</a></li>{% endif %}
             </ul>
@@ -309,6 +310,34 @@
                 {%- endfor %}
               </div>
 
+              {% if char.details.implants.all()|length > 0 and show.implants %}
+              <div class="tab-pane" id="tab_implants">
+                <div class="row">
+                  <table class="table table-condensed table-striped table-hover" style="margin-bottom: 0;">
+                    <tbody>
+                      {% for implant in char.details.implants.order_by('implant_slot') %}
+                        <tr>
+                          {% if show_item_icons %}
+                          {% endif %}
+                          <td class="implant">
+                            {% if show_item_icons %}
+                            <img src="//image.eveonline.com/Type/{{ implant.item.id }}_32.png" />
+                            {% endif %}
+                            {{ implant.item.name }}
+                          </td>
+                          <td class="col-sm-2 col-xs-3" style="vertical-align: middle;">{{ implant.item.sell_price|commas }}</td>
+                        </tr>
+                      {% endfor %}
+                      <tr>
+                        <td></td>
+                        <td><strong>{{ char.details.implants.all()|sum(attribute='item.sell_price')|commas }}</strong></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              {% endif %}
+
               {% if char.clones.all()|length > 0 and show.jump_clones %}
               <div class="tab-pane" id="tab_clones">
                 <div class="row">
@@ -329,7 +358,7 @@
                         {% endif %}
                       </div>
 
-                      <div class="panel-body>">
+                      <div class="">
                         <table class="table table-condensed table-striped table-hover" style="margin-bottom: 0;">
                           <tbody>
                           {% if clone.implants.all()|length > 0 %}
@@ -348,7 +377,7 @@
                             {% endfor %}
                             <tr>
                               <td></td>
-                              <td><strong>{{ clone.get_implants_value()|commas }}</strong></td>
+                              <td><strong>{{ clone.implants.all()|sum(attribute='implant.item.sell_price')|commas }}</strong></td>
                             </tr>
                           {% else %}
                             <tr>
