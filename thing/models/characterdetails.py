@@ -23,6 +23,8 @@
 # OF SUCH DAMAGE.
 # ------------------------------------------------------------------------------
 
+from datetime import datetime
+
 from django.db import models
 
 from thing.models.character import Character
@@ -101,3 +103,15 @@ class CharacterDetails(models.Model):
 
     def __unicode__(self):
         return '%s' % self.character
+
+
+    def fatigue(self):
+        if self.fatigue_expire_date != None:
+            return self.fatigue_expire_date - datetime.now()
+
+    def has_fatigue(self):
+        if self.fatigue_expire_date == None:
+            return False
+
+        fatigue = self.fatigue_expire_date - datetime.now()
+        return fatigue.total_seconds() > 0

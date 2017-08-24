@@ -36,6 +36,20 @@ from jingo import register
 
 
 @register.filter
+def fatiguetime(delta):
+    out = "%.2i:%.2i:%.2i" % (
+        (delta.seconds / 60 / 60) % 24,
+        (delta.seconds / 60) % 60,
+        delta.seconds % 60
+    )
+
+    if delta.days > 0:
+        out = "%sD %s" % (str(delta.days), out)
+
+    return out
+
+
+@register.filter
 def tablecols(data, cols):
     rows = []
     row = []

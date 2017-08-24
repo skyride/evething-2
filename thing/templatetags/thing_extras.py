@@ -10,6 +10,7 @@ register = template.Library()
 re_digits_nondigits = re.compile(r'\d+|\D+')
 
 
+
 @register.filter
 @stringfilter
 def commas(value):
