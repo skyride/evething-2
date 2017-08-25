@@ -413,6 +413,23 @@ class ESI_CharacterInfo(APITask):
                     db_pin.quantity_per_cycle = pin['extractor_details']['qty_per_cycle']
                     db_pin.installed = self.parse_api_date(pin['install_time'])
                     db_pin.expires = self.parse_api_date(pin['expiry_time'])
+                if "contents" in pin:
+                    # Clear contents
+                    PinContent.objects.filter(pin=db_pin).delete()
+
+                    # Add new contents
+                    contents = []
+                    for item in pin['contents']:
+                        content = PinContent(
+                            pin=db_pin,
+                            item_id=item['type_id'],
+                            quantity=item['amount']
+                        )
+                        contents.append(content)
+                        content.save()
+
+                    # Calculate content size
+                    db_pin.content_size = sum(map(lambda x: x.quantity * x.item.volume, contents))
 
                 db_pin.save()
 
