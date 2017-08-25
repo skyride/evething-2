@@ -210,6 +210,11 @@
                   <li><strong>Location:</strong> {{ char.details.last_known_location }}</li>
                   <li><strong>Ship:</strong> {{ char.details.ship_item.name }} - {{ char.details.ship_name }}</li>
                   <li><strong>Total SP:</strong> {{ total_sp|commas }}</li>
+                  {% if char.details.has_fatigue() %}
+                  <li><strong>Jump Fatigue:</strong> {{ char.details.fatigue()|fatiguetime }} ({{ char.details.fatigue_expire_date }} UTC)
+                  {% else %}
+                  <li><strong>Jump Fatigue:</strong> None</li>
+                  {% endif %}
                 </ul>
               </div>
               <div class="col-sm-7 col-md-8 pull-right">
