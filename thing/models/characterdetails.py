@@ -107,11 +107,11 @@ class CharacterDetails(models.Model):
 
     def fatigue(self):
         if self.fatigue_expire_date != None:
-            return self.fatigue_expire_date - datetime.now()
+            return self.fatigue_expire_date - datetime.utcnow()
 
     def has_fatigue(self):
         if self.fatigue_expire_date == None:
             return False
 
-        fatigue = self.fatigue_expire_date - datetime.now()
+        fatigue = self.fatigue_expire_date - datetime.utcnow()
         return fatigue.total_seconds() > 0
