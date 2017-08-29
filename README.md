@@ -7,24 +7,15 @@ New Features
 
 * Full support for Citadels/Engineering Complexes/etc
 * Jump Clones
+* Jump Fatigue
 
 Missing Features
 ----------------
-As ESI is still a work-in-progress, EVEthing 2 is currently missing some key features. These will be added as soon as possible, but the ball is entirely in CCP's court.
+As ESI is still a work-in-progress, EVEthing 2 is currently missing a few features. These will be added as soon as possible, but the ball is entirely in CCP's court.
 
-* Contracts
 * Wallet Journal
 * Wallet Transactions
-* Current implants (affects training time calculations)
-* Character attributes (affects training time calculations)
-* Contents of a PI structure
 * Anything to do with Corporations
-
-
-Planned features
-----------------
-
-* Skill Planner
 
 
 
