@@ -56,7 +56,11 @@ class ESI_MailFetchTask(APITask):
             #to_characters=to_characters,
             to_corp_or_alliance_id=to_corp_or_alliance_id,
             to_list_id=to_list_id,
-            body=body['body'].replace("<br>", "\n"),
-            read=mail['is_read']
+            body=body['body'].replace("<br>", "\n")
+            #read=mail['is_read']
         )
+
+        if "is_read" in mail:
+            db_mail.read = mail['is_read']
+
         db_mail.save()
