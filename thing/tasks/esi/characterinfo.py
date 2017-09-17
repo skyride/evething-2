@@ -323,6 +323,11 @@ class ESI_CharacterInfo(APITask):
 
         ## Orders
         orders = self.api.get("/characters/$id/orders/")
+
+        # Delete orders if they no longer exist
+        order_map = map(lambda x: x['order_id'], orders)
+        MarketOrder.objects.filter(character=character).exclude(order_id__in=order_map).delete()
+
         for order in orders:
             db_order = MarketOrder.objects.filter(order_id=order['order_id'])
             if len(db_order) == 1:
