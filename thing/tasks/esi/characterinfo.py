@@ -320,6 +320,18 @@ class ESI_CharacterInfo(APITask):
 
             db_job.save()
 
+        # Fix status of stuck jobs
+        job_map = map(lambda x: x['job_id'], jobs)
+        for job in IndustryJob.objects.filter(
+                character=character,
+                status=IndustryJob.ACTIVE_STATUS
+            ).exclude(
+                job_id__in=job_map
+            ):
+
+            # Set stuck jobs to delivered
+            job.status = IndustryJob.DELIVERED_STATUS
+            job.save()
 
         ## Orders
         orders = self.api.get("/characters/$id/orders/")
