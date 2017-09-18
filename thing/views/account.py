@@ -84,9 +84,7 @@ def account(request):
             'visibilities': SkillPlan.VISIBILITY_CHOICES,
             'disable_password': getattr(settings, 'DISABLE_ACCOUNT_PASSWORD', False),
             'esi_tokens': ESIToken.objects.filter(user=request.user).order_by('-status', 'added'),
-            'accounts': EveAccount.objects.filter(user=request.user).order_by('username').prefetch_related(
-                'tokens', 'tokens__character'
-            ),
+            'accounts': EveAccount.objects.filter(user=request.user).order_by('username'),
             'user': request.user
         },
         request,
