@@ -14,6 +14,13 @@ class EveAccount(models.Model):
                 return True
         return False
 
+    def active_queues(self):
+        queues = 0
+        for token in self.tokens.all():
+            if token.character.is_training():
+                queues += 1
+        return queues
+
 
     def slotOne(self):
         return self.tokens.order_by('characterID').first()

@@ -299,7 +299,11 @@
                     <tbody>
                       {% for account in accounts %}
                       <tr align="center">
-                        <td style="vertical-align: middle;">{{ account.username }}</td>
+                        <td style="vertical-align: middle;">
+                          <span class="text-{% if account.is_subbed() %}success{% else %}danger{% endif %}">
+                            {{ account.username }} ({{ account.active_queues() }})
+                          </span>
+                        </td>
 
                         {% if account.slotOne() %}
                         <td>
