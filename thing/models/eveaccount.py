@@ -10,15 +10,17 @@ class EveAccount(models.Model):
     # This is unreliable right now as skill queues aren't a good indicator of subscription status
     def is_subbed(self):
         for token in self.tokens.all():
-            if token.character.is_training():
-                return True
+            if token.character != None:
+                if token.character.is_training():
+                    return True
         return False
 
     def active_queues(self):
         queues = 0
         for token in self.tokens.all():
-            if token.character.is_training():
-                queues += 1
+            if token.character != None:
+                if token.character.is_training():
+                    queues += 1
         return queues
 
 

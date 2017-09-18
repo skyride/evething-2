@@ -33,7 +33,7 @@
           <ul class="nav nav-tabs">
             <li class="active"><a href="#tab_settings" data-toggle="tab">Settings</a></li>
             <li><a href="#tab_connectedcharacters" data-toggle="tab">Connected Characters</a></li>
-            <li><a href="#tab_accounts" data-toggle="tab">Accounts</a></li>
+            {# <li><a href="#tab_accounts" data-toggle="tab">Accounts</a></li> #}
             <li><a href="#tab_skillplans" data-toggle="tab">Skill Plans</a></li>
             {%- if not disable_password %}
             <li><a href="#tab_password" data-toggle="tab">Change Password</a></li>
@@ -223,6 +223,7 @@
             {# apikeys: connected characters -#}
             <div class="tab-pane" id="tab_connectedcharacters">
               <br />
+
               <div class="col-sm-12">
                 <a href="{{ url('thing.views.account_sso_callback') }}"
                   class="btn btn-primary pull-right">
@@ -230,7 +231,42 @@
                 </a>
               </div>
 
-              <div class="col-sm-12">
+              <div class="col-sm-2">
+                <form method="POST" action="{{ url('thing.views.account_account_add') }}">
+                  <table class="table table-striped table-bordered table-condensed">
+                    <tr class="c">
+                      <th>Accounts</th>
+                    </tr>
+
+                    {% for account in accounts %}
+                    <tr align="center">
+                      <td>
+                        <span class="text-{% if account.is_subbed() %}success{% else %}danger{% endif %}">
+                          {{ account.username }} ({{ account.active_queues() }})
+                        </span>
+                        <span class="pull-right">
+                          <a type="submit" class="btn btn-danger btn-xs" href="{{ url('thing.views.account_account_delete') }}?id={{ account.id }}">Delete</a>
+                        </span>
+                      </td>
+                    </tr>
+                    {% endfor %}
+
+                    <tr class="c">
+                      {{ csrf() }}
+                      <td>
+                        <div class="input-group">
+                          <input class="form-control" type="text" name="username" placeholder="Username">
+                          <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit">Save</button>
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </form>
+              </div>
+
+              <div class="col-sm-10">
                 <table class="table table-striped table-bordered table-condensed" id="key-table">
                   <thead>
                     <tr class="c">
@@ -316,10 +352,14 @@
                           {{ account.slotOne().name }}
                         </td>
                         <td>
-                          {% if account.slotOne().character.is_training() %}
-                          <span class="text-success">Training</span>
+                          {% if account.slotOne().character %}
+                            {% if account.slotOne().character.is_training() %}
+                            <span class="text-success">Training</span>
+                            {% else %}
+                            <span class="text-danger">Not Training</span>
+                            {% endif %}
                           {% else %}
-                          <span class="text-danger">Not Training</span>
+                          <span class="text-warning">Loading...</span>
                           {% endif %}
                         </td>
                         {% else %}
@@ -337,10 +377,14 @@
                           {{ account.slotTwo().name }}
                         </td>
                         <td>
-                          {% if account.slotTwo().character.is_training() %}
-                          <span class="text-success">Training</span>
+                          {% if account.slotTwo().character %}
+                            {% if account.slotTwo().character.is_training() %}
+                            <span class="text-success">Training</span>
+                            {% else %}
+                            <span class="text-danger">Not Training</span>
+                            {% endif %}
                           {% else %}
-                          <span class="text-danger">Not Training</span>
+                          <span class="text-warning">Loading...</span>
                           {% endif %}
                         </td>
                         {% else %}
@@ -358,10 +402,14 @@
                           {{ account.slotThree().name }}
                         </td>
                         <td>
-                          {% if account.slotThree().character.is_training() %}
-                          <span class="text-success">Training</span>
+                          {% if account.slotThree().character %}
+                            {% if account.slotThree().character.is_training() %}
+                            <span class="text-success">Training</span>
+                            {% else %}
+                            <span class="text-danger">Not Training</span>
+                            {% endif %}
                           {% else %}
-                          <span class="text-danger">Not Training</span>
+                          <span class="text-warning">Loading...</span>
                           {% endif %}
                         </td>
                         {% else %}
