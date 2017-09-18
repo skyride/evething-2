@@ -307,7 +307,10 @@
 
                         {% if account.slotOne() %}
                         <td>
-                          <img class="img-responsive img-rounded" src="//image.eveonline.com/Character/{{ account.slotOne().characterID }}_64.jpg">
+                          <img class="img-rounded" src="//image.eveonline.com/Character/{{ account.slotOne().characterID }}_64.jpg">
+                          {% if account.slotOne().character.corporation_id %}
+                          <img class="img-rounded" style="background-color: #333333;" src="//image.eveonline.com/Corporation/{{ account.slotOne().character.corporation_id }}_64.png">
+                          {% endif %}
                         </td>
                         <td style="vertical-align: middle;">
                           {{ account.slotOne().name }}
@@ -325,7 +328,10 @@
 
                         {% if account.slotTwo() %}
                         <td>
-                          <img class="img-responsive img-rounded" src="//image.eveonline.com/Character/{{ account.slotTwo().characterID }}_64.jpg">
+                          <img class="img-rounded" src="//image.eveonline.com/Character/{{ account.slotTwo().characterID }}_64.jpg">
+                          {% if account.slotTwo().character.corporation_id %}
+                          <img class="img-rounded" style="background-color: #333333;" src="//image.eveonline.com/Corporation/{{ account.slotTwo().character.corporation_id }}_64.png">
+                          {% endif %}
                         </td>
                         <td style="vertical-align: middle;">
                           {{ account.slotTwo().name }}
@@ -343,7 +349,10 @@
 
                         {% if account.slotThree() %}
                         <td>
-                          <img class="img-responsive img-rounded" src="//image.eveonline.com/Character/{{ account.slotThree().characterID }}_64.jpg">
+                          <img class="img-rounded" src="//image.eveonline.com/Character/{{ account.slotThree().characterID }}_64.jpg">
+                          {% if account.slotThree().character.corporation_id %}
+                          <img class="img-rounded" style="background-color: #333333;" src="//image.eveonline.com/Corporation/{{ account.slotThree().character.corporation_id }}_64.png">
+                          {% endif %}
                         </td>
                         <td style="vertical-align: middle;">
                           {{ account.slotThree().name }}

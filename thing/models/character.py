@@ -69,7 +69,6 @@ class Character(models.Model):
             end_time__gte=datetime.utcnow()
         ).count() > 0
 
-
     @models.permalink
     def get_absolute_url(self):
         return ('character', (), {'character_name': self.name, })
