@@ -48,6 +48,13 @@
                 </a>
                 {%- endif %}
               </span>
+
+              {% if character.esitoken.account %}
+              <span class="small pull-right sensitive account-name">
+                [{{ character.esitoken.account.username }}]
+              </span>
+              {% endif %}
+
               {%- if profile.home_show_security %}
               {{ common.security_hover(character.details.security_status) }}
               {%- endif %}
