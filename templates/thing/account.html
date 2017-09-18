@@ -241,9 +241,10 @@
                     {% for account in accounts %}
                     <tr align="center">
                       <td>
-                        <span class="text-{% if account.is_subbed() %}success{% else %}danger{% endif %}">
+                        {# <span class="text-{% if account.is_subbed() %}success{% else %}danger{% endif %}">
                           {{ account.username }} ({{ account.active_queues() }})
-                        </span>
+                        </span> #}
+                        {{ account.username }}
                         <span class="pull-right">
                           <a type="submit" class="btn btn-danger btn-xs" href="{{ url('thing.views.account_account_delete') }}?id={{ account.id }}">Delete</a>
                         </span>

@@ -380,3 +380,19 @@ def home(request):
         tt.finished()
 
     return out
+
+
+
+@login_required
+def accounts(request):
+    return render_page(
+        'thing/accounts.html',
+        {
+            'esi_tokens': ESIToken.objects.filter(user=request.user).order_by('-status', 'added'),
+            'accounts': EveAccount.objects.filter(user=request.user).order_by('username').prefetch_related(
+                'tokens', 'tokens__character'
+            ),
+            'user': request.user
+        },
+        request
+    )

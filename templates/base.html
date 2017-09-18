@@ -37,6 +37,7 @@
           <div class="collapse navbar-collapse" id="navbar-collapse">
             <ul class="nav navbar-nav" id="nav-list">
 {% if authed %}{% set profile = user.profile %}
+              <li><a href="{{ url('thing.views.accounts') }}">Accounts</a></li>
               {% if profile.show_assets %}<li><a href="{{ url('thing.views.assets_summary') }}">Assets</a></li>{% endif %}
               {% if profile.show_clones %}<li><a href="{{ url('thing.views.clones_home') }}">Clones</a></li>{% endif %}
               {# {% if profile.show_blueprints %}<li><a href="{{ url('thing.views.blueprints') }}">Blueprints</a></li>{% endif %} #}

@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 
-
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
@@ -21,6 +20,8 @@ urlpatterns = patterns(
 urlpatterns += patterns(
     'thing.views',
     url(r'^$', 'home', name='home'),
+
+    (r'^accounts/$', 'accounts'),
 
     (r'^account/$', 'account'),
     (r'^account/change_password/$', 'account_change_password'),
