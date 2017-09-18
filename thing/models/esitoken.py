@@ -11,7 +11,7 @@ class ESIToken(models.Model):
     refresh_token = models.CharField(max_length=320)
 
     user = models.ForeignKey(User)
-    account = models.ForeignKey(EveAccount, related_name="tokens", null=True, default=None)
+    account = models.ForeignKey(EveAccount, related_name="tokens", null=True, default=None, on_delete=models.SET_NULL)
     status = models.BooleanField(default=True)
     added = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True, default=datetime(0001, 1, 1, 1, 0))
