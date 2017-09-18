@@ -313,11 +313,10 @@
                           {{ account.slotOne().name }}
                         </td>
                         <td>
-                          Training Status:
                           {% if account.slotOne().character.is_training() %}
-                          <span class="text-success glyphicon glyphicon-ok" aria-hidden="true"></span>
+                          <span class="text-success">Training</span>
                           {% else %}
-                          <span class="text-danger glyphicon glyphicon-remove" aria-hidden="true"></span>
+                          <span class="text-danger">Not Training</span>
                           {% endif %}
                         </td>
                         {% else %}
@@ -332,11 +331,10 @@
                           {{ account.slotTwo().name }}
                         </td>
                         <td>
-                          Training Status:
                           {% if account.slotTwo().character.is_training() %}
-                          <span class="text-success glyphicon glyphicon-ok" aria-hidden="true"></span>
+                          <span class="text-success">Training</span>
                           {% else %}
-                          <span class="text-danger glyphicon glyphicon-remove" aria-hidden="true"></span>
+                          <span class="text-danger">Not Training</span>
                           {% endif %}
                         </td>
                         {% else %}
@@ -351,11 +349,10 @@
                           {{ account.slotThree().name }}
                         </td>
                         <td>
-                          Training Status:
                           {% if account.slotThree().character.is_training() %}
-                          <span class="text-success glyphicon glyphicon-ok" aria-hidden="true"></span>
+                          <span class="text-success">Training</span>
                           {% else %}
-                          <span class="text-danger glyphicon glyphicon-remove" aria-hidden="true"></span>
+                          <span class="text-danger">Not Training</span>
                           {% endif %}
                         </td>
                         {% else %}
