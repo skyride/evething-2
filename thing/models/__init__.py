@@ -30,6 +30,7 @@ from thing.models.esitoken import ESIToken
 from thing.models.serverstatus import ServerStatus
 
 # Everything else
+from thing.models.eveaccount import EveAccount
 from thing.models.apikey import APIKey
 from thing.models.apikeyfailure import APIKeyFailure
 from thing.models.asset import Asset

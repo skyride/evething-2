@@ -31,6 +31,9 @@ urlpatterns += patterns(
 
     (r'^account/esi/update/$', 'account_esi_forceupdate'),
     (r'^account/esi/delete/$', 'account_esi_delete'),
+    (r'^account/characteraccount/save/$', 'account_character_account_save'),
+    (r'^account/account/add/$', 'account_account_add'),
+    (r'^account/account/delete/$', 'account_account_delete'),
 
     (r'^account/sso/authorize/$', 'account_sso_authorize'),
     (r'^account/sso/callback/$', 'account_sso_callback'),

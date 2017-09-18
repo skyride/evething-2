@@ -4,12 +4,14 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from thing.models.character import Character
+from thing.models.eveaccount import EveAccount
 
 class ESIToken(models.Model):
     access_token = models.CharField(max_length=128)
     refresh_token = models.CharField(max_length=320)
 
     user = models.ForeignKey(User)
+    account = models.ForeignKey(EveAccount, related_name="tokens", null=True, default=None)
     status = models.BooleanField(default=True)
     added = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True, default=datetime(0001, 1, 1, 1, 0))

@@ -25,6 +25,7 @@
 
 from django.db import models
 from django.db.models import Sum
+from datetime import datetime
 
 from thing.models.corporation import Corporation
 
@@ -63,6 +64,10 @@ class Character(models.Model):
         return db_char
 
 
+    def is_training(self):
+        return self.skillqueue.filter(
+            end_time__gte=datetime.utcnow()
+        ).count() > 0
 
 
     @models.permalink

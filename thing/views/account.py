@@ -84,6 +84,7 @@ def account(request):
             'visibilities': SkillPlan.VISIBILITY_CHOICES,
             'disable_password': getattr(settings, 'DISABLE_ACCOUNT_PASSWORD', False),
             'esi_tokens': ESIToken.objects.filter(user=request.user).order_by('-status', 'added'),
+            'accounts': EveAccount.objects.filter(user=request.user).order_by('username'),
             'user': request.user
         },
         request,
@@ -178,6 +179,66 @@ def account_esi_delete(request):
     request.session['message'] = "Disconnected character %s" % token.name
     token.delete()
     return redirect('%s#connectedcharacters' % (reverse(account)))
+
+
+@login_required
+def account_character_account_save(request):
+    # Check the user owns the token
+    token = ESIToken.objects.filter(
+        id=request.GET.get("token"),
+        user=request.user
+    )
+    if token.count() < 1:
+        return HttpResponse("false", content_type="application/json")
+    token = token[0]
+
+    # Set null account if that was the requested option
+    if request.GET.get("account") == "-":
+        token.account = None
+        token.save()
+        return HttpResponse("true", content_type="application/json")
+
+    # Check the user owns the account
+    account = EveAccount.objects.filter(
+        id=request.GET.get("account"),
+        user=request.user
+    )
+    if account.count() < 1:
+        return HttpResponse("false", content_type="application/json")
+    account = account[0]
+
+    # Set the account and save
+    token.account = account
+    token.save()
+    return HttpResponse("true", content_type="application/json")
+
+
+@login_required
+def account_account_add(request):
+    eveaccount = EveAccount(
+        user=request.user,
+        username=request.POST.get("username")
+    )
+    eveaccount.save()
+
+    request.session['message_type'] = "success"
+    request.session['message'] = "Successfully added account %s" % (eveaccount.username)
+    return redirect(reverse(account))
+
+
+@login_required
+def account_account_delete(request):
+    eveaccount = EveAccount.objects.filter(
+        user=request.user,
+        id=request.GET.get("id")
+    )
+    if eveaccount.count() > 0:
+        username = eveaccount[0].username
+        eveaccount.delete()
+        request.session['message_type'] = "success"
+        request.session['message'] = "Successfully deleted account %s" % username
+
+    return redirect(reverse(account))
 
 
 
