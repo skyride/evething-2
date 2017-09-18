@@ -258,21 +258,22 @@ def home(request):
 
         # Sort out well classes here ugh
         classes = []
-        if char.z_apikey in not_training:
-            if profile.home_highlight_backgrounds:
-                classes.append('background-error')
-            if profile.home_highlight_borders:
-                classes.append('border-error')
-        elif char.z_notifications:
-            if profile.home_highlight_backgrounds:
-                classes.append('background-warn')
-            if profile.home_highlight_borders:
-                classes.append('border-warn')
-        else:
-            if profile.home_highlight_backgrounds:
-                classes.append('background-success')
-            if profile.home_highlight_borders:
-                classes.append('border-success')
+        if char.esitoken.account:
+            if not char.esitoken.account.is_subbed():
+                if profile.home_highlight_backgrounds:
+                    classes.append('background-error')
+                if profile.home_highlight_borders:
+                    classes.append('border-error')
+            elif char.z_notifications:
+                if profile.home_highlight_backgrounds:
+                    classes.append('background-warn')
+                if profile.home_highlight_borders:
+                    classes.append('border-warn')
+            else:
+                if profile.home_highlight_backgrounds:
+                    classes.append('background-success')
+                if profile.home_highlight_borders:
+                    classes.append('border-success')
 
         if classes:
             char.z_well_class = ' %s' % (' '.join(classes))
