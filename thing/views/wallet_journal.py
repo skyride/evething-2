@@ -72,9 +72,8 @@ def wallet_journal(request):
     profile = request.user.profile
 
     characters = Character.objects.filter(
-        apikeys__user=request.user,
-        apikeys__valid=True,
-        apikeys__key_type__in=[APIKey.ACCOUNT_TYPE, APIKey.CHARACTER_TYPE]
+        esitoken__user=request.user,
+        esitoken__status=True
     ).distinct()
     character_ids = [c.id for c in characters]
 
@@ -136,16 +135,16 @@ def wallet_journal(request):
     for entry in entries:
         owner_ids.add(entry.owner1_id)
         owner_ids.add(entry.owner2_id)
-        reftype_ids.add(entry.ref_type_id)
+        reftype_ids.add(entry.ref_type)
 
         # Insurance
-        if entry.ref_type_id == 19:
+        if entry.ref_type == "insurance":
             item_ids.add(int(entry.arg_name))
         # Clone Transfer
-        elif entry.ref_type_id == 52:
+        elif entry.ref_type == "clone_transfer":
             station_ids.add(int(entry.arg_id))
         # Bounty Prizes
-        elif entry.ref_type_id == 85:
+        elif entry.ref_type == "bounty_prizes":
             for thing in entry.reason.split(','):
                 thing = thing.strip()
                 if ':' in thing:
@@ -155,7 +154,7 @@ def wallet_journal(request):
     corp_map = Corporation.objects.in_bulk(owner_ids)
     alliance_map = Alliance.objects.in_bulk(owner_ids)
     item_map = Item.objects.in_bulk(item_ids)
-    rt_map = RefType.objects.in_bulk(reftype_ids)
+    rt_map = JournalEntry.objects.values_list('ref_type', flat=True).distinct()
     station_map = Station.objects.in_bulk(station_ids)
 
     for entry in entries:
@@ -176,16 +175,16 @@ def wallet_journal(request):
         entry.z_owner2_alliance = alliance_map.get(entry.owner2_id)
 
         # RefType
-        entry.z_reftype = rt_map.get(entry.ref_type_id)
+        entry.z_reftype = entry.ref_type
 
         # Inheritance
-        if entry.ref_type_id == 9:
+        if entry.ref_type == "inheritance":
             entry.z_description = entry.reason
         # Player Donation/Corporation Account Withdrawal
-        elif entry.ref_type_id in (10, 37) and entry.reason != '':
+        elif entry.ref_type in ("player_donation", "corporation_account_withdrawal") and entry.reason != '':
             entry.z_description = '"%s"' % (entry.get_unescaped_reason()[5:].strip())
         # Insurance, arg_name is the item_id of the ship that exploded
-        elif entry.ref_type_id == 19:
+        elif entry.ref_type == "insurance":
             if entry.amount >= 0:
                 item = item_map.get(int(entry.arg_name))
                 if item:
@@ -193,12 +192,12 @@ def wallet_journal(request):
             else:
                 entry.z_description = 'Insurance purchased (RefID: %s)' % (entry.arg_name[1:])
         # Clone Transfer, arg_name is the name of the station you're going to
-        elif entry.ref_type_id == 52:
+        elif entry.ref_type == "acceleration_gate_fee":
             station = station_map.get(entry.arg_id)
             if station:
                 entry.z_description = 'Clone transfer to %s' % (station.short_name)
         # Bounty Prizes
-        elif entry.ref_type_id == 85:
+        elif entry.ref_type == "bounty_prizes":
             killed = []
 
             for thing in entry.reason.split(','):
@@ -218,7 +217,7 @@ def wallet_journal(request):
             entry.z_hover = '||'.join(killed)
 
         # Filter links
-        entry.z_reftype_filter = build_filter(filters, 'reftype', 'eq', entry.ref_type_id)
+        entry.z_reftype_filter = build_filter(filters, 'reftype', 'eq', entry.ref_type)
         entry.z_owner1_filter = build_filter(filters, 'owners', 'eq', entry.z_owner1_char or entry.z_owner1_corp or entry.z_owner1_alliance)
         entry.z_owner2_filter = build_filter(filters, 'owners', 'eq', entry.z_owner2_char or entry.z_owner2_corp or entry.z_owner2_alliance)
 
@@ -245,7 +244,7 @@ def wallet_journal(request):
 
 @login_required
 def wallet_journal_aggregate(request):
-    characters = Character.objects.filter(apikeys__user=request.user.id)
+    characters = Character.objects.filter(esitoken__user=request.user.id)
     character_ids = [c.id for c in characters]
 
     corporation_ids = Corporation.get_ids_with_access(request.user, APIKey.CORP_WALLET_JOURNAL_MASK)
@@ -375,7 +374,6 @@ class WJAggregator(object):
         return cmp(a[2], b[2])
 
     def finalise(self):
-        ref_map = RefType.objects.in_bulk(self.__reftypes)
         char_map = Character.objects.in_bulk(self.__owners | self.__characters)
         corp_map = Corporation.objects.in_bulk(self.__owners)
         alliance_map = Alliance.objects.in_bulk(self.__owners)
@@ -404,7 +402,7 @@ class WJAggregator(object):
                         group_data.extend([None, 'Unknown ID: %s' % (entry['character'])])
 
             if self.__group_by['reftype']:
-                ref_name = ref_map[entry['ref_type']].name
+                ref_name = entry['ref_type'].replace("_", " ").title()
                 group_data.extend([ref_name, ref_name])
 
             if self.__group_by['owner1']:

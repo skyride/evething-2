@@ -12,10 +12,13 @@ class IndustryJobStatusEnum(Enum):
 class JournalReferenceEnum(Enum):
     player_trading = 1
     market_transaction = 2
+    gm_cash_transfer = 3
     mission_reward = 7
     clone_activation = 8
+    inheritance = 9
     player_donation = 10
     corporation_payment = 11
+    docking_fee = 12
     office_rental_fee = 13
     factory_slot_rental_fee = 14
     repair_bill = 15
@@ -100,6 +103,7 @@ class JournalReferenceEnum(Enum):
     planetary_construction = 98
     corporate_reward_payout = 99
     bounty_surcharge = 101
+    contract_reversal = 102
     corporate_reward_tax = 103
     store_purchase = 106
     store_purchase_refund = 107
@@ -117,6 +121,7 @@ class JournalReferenceEnum(Enum):
     project_discovery_tax = 126
     reprocessing_tax = 127
     jump_clone_activation_fee = 128
+    operation_bonus = 129
 
 
 class PersonalLocationFlagEnum(Enum):

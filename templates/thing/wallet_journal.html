@@ -77,7 +77,7 @@
                   {% endif %}
                 </td>
                 <td>
-                  <a href="?{{ entry.z_reftype_filter }}">{{ entry.z_reftype }}</a>
+                  <a href="?{{ entry.z_reftype_filter }}">{{ entry.ref_type_display() }}</a>
                 </td>
                 <td>
                   {% if entry.z_owner1_char -%}

@@ -41,7 +41,8 @@ class JournalEntry(models.Model):
     date = models.DateTimeField(db_index=True)
 
     ref_id = models.BigIntegerField(db_index=True)
-    ref_type = models.ForeignKey(RefType)
+    #ref_type = models.ForeignKey(RefType)
+    ref_type = models.CharField(max_length=64, db_index=True)
 
     owner1_id = models.IntegerField(default=0)
     owner2_id = models.IntegerField(default=0)
@@ -59,6 +60,9 @@ class JournalEntry(models.Model):
     class Meta:
         app_label = 'thing'
         ordering = ('-date',)
+
+    def ref_type_display(self):
+        return self.ref_type.replace("_", " ").title()
 
     def get_unescaped_reason(self):
         if len(self.reason) > 0:

@@ -185,7 +185,7 @@ def parse_filters(request, expected):
         # If the entry must be a number, verify that
         if ex.get('number', False):
             try:
-                fv = int(fv)
+                fv = fv
             except ValueError:
                 continue
 
