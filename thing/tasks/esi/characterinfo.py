@@ -109,7 +109,8 @@ class ESI_CharacterInfo(APITask):
                 if db_entry.ref_type == "insurance":
                     db_entry.owner1_id = character.id
                     db_entry.owner2_id = 1000132
-                    db_entry.arg_name = entry['extra_info']['destroyed_ship_type_id']
+                    if "extra_info" in entry:
+                        db_entry.arg_name = entry['extra_info']['destroyed_ship_type_id']
                 else:
                     if "first_party_id" in entry:
                         db_entry.owner1_id = entry['first_party_id']
