@@ -1,6 +1,7 @@
 import requests
 import json
 
+from time import sleep
 from base64 import b64encode
 from urllib import urlencode
 from hashlib import sha256
@@ -67,7 +68,11 @@ class ESI():
                 return None
 
         # ESI is buggy, so lets give it up to 10 retries for 500 error
-        if r.status_code in [500, 502]:
+        if r.status_code in [500, 502, 420]:
+            # If we got 420 just chill for a couple seconds
+            if r.status_code == 420:
+                sleep(3)
+
             if retries < local_settings.ESI_RETRIES:
                 return self.request(url, data=data, method=method, retries=retries+1)
             else:

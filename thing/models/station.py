@@ -77,8 +77,6 @@ class Station(models.Model):
                     try:
                         r = api.get("/universe/structures/%s/" % station.id)
                         if r == None:
-                            station.save()
-                        else:
                             station.name = r['name']
                             station.system_id = r['solar_system_id']
                             station.save()
