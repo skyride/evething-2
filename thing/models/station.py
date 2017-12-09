@@ -72,19 +72,19 @@ class Station(models.Model):
             if not station.structure:
                 return station
             else:
-                if station.lastupdated < datetime.now() - timedelta(days=2):
-                    # Update the structures name from the API
-                    try:
-                        r = api.get("/universe/structures/%s/" % station.id)
-                        if r == None:
-                            station.name = r['name']
-                            station.system_id = r['solar_system_id']
-                            station.save()
-                    except Exception:
-                        # We failed to get it, probably because it's a structure
-                        # this token no longer has docking rights for
-                        # Save the station anyway so don't repeatedly bash the API
-                        station.save()
+                # if station.lastupdated < datetime.now() - timedelta(days=2):
+                #     # Update the structures name from the API
+                #     try:
+                #         r = api.get("/universe/structures/%s/" % station.id)
+                #         if r == None:
+                #             station.name = r['name']
+                #             station.system_id = r['solar_system_id']
+                #             station.save()
+                #     except Exception:
+                #         # We failed to get it, probably because it's a structure
+                #         # this token no longer has docking rights for
+                #         # Save the station anyway so don't repeatedly bash the API
+                #         station.save()
 
                 return station
 
