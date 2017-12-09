@@ -33,7 +33,7 @@ from thing.models.system import System
 class AssetSummary(models.Model):
     character = models.ForeignKey(Character)
     corporation_id = models.IntegerField(default=0)
-    system = models.ForeignKey(System)
+    system = models.ForeignKey(System, null=True)
     station = models.ForeignKey(Station, blank=True, null=True)
 
     total_items = models.BigIntegerField()
