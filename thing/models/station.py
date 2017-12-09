@@ -56,7 +56,7 @@ class Station(models.Model):
     item = models.ForeignKey(Item, null=True, default=None)
     lastupdated = models.DateTimeField(auto_now=True)
 
-    system = models.ForeignKey(System, null=True, default=None)
+    system = models.ForeignKey(System, null=True)
 
     class Meta:
         app_label = 'thing'
@@ -112,7 +112,7 @@ class Station(models.Model):
 
             station.save()
             return station
-            
+
         except Exception:
             # We crashed out, it must not be a structure
             return None
