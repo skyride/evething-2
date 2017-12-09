@@ -50,13 +50,13 @@ def roman_to_int(n):
 
 class Station(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, default="**UNKNOWN**")
     short_name = models.CharField(max_length=64, default='')
     structure = models.BooleanField(default=False)
-    item = models.ForeignKey(Item, null=True)
+    item = models.ForeignKey(Item, null=True, default=None)
     lastupdated = models.DateTimeField(auto_now=True)
 
-    system = models.ForeignKey(System)
+    system = models.ForeignKey(System, null=True, default=None)
 
     class Meta:
         app_label = 'thing'
@@ -103,14 +103,16 @@ class Station(models.Model):
                 r = api.get("/universe/structures/%s/" % id)
                 station = Station(
                     id=id,
-                    name=r['name'],
-                    system_id=r['solar_system_id'],
-                    structure=True,
-                    item_id=r['type_id']
+                    structure=True
                 )
-            station.save()
+                if r != None:
+                    station.name = r['name'],
+                    station.system_id = r['solar_system_id'],
+                    station.item_id = r['type_id']
 
+            station.save()
             return station
+            
         except Exception:
             # We crashed out, it must not be a structure
             return None
