@@ -6,7 +6,9 @@
 {% block extra_js %}
     <script type="text/javascript">
       $(document).ready(function() {
+        {% autoescape off %}
         EVEthing.mail.characters = { {% for character in characters %}{{ character.0 }}:'{{character.1}}',{% endfor %} };
+        {% endautoescape %}
         EVEthing.mail.headers_url = "{{ url('thing.views.mail_json_headers') }}";
         EVEthing.mail.body_url = "{{ url('thing.views.mail_json_body', '0000') }}";
         EVEthing.mail.onload();
