@@ -71,7 +71,7 @@ class ESI():
         if r.status_code in [500, 502, 420]:
             # If we got 420 just chill for a couple seconds
             if r.status_code == 420:
-                sleep(3)
+                sleep(1)
 
             if retries < local_settings.ESI_RETRIES:
                 return self.request(url, data=data, method=method, retries=retries+1)
