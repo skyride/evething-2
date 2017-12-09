@@ -35,8 +35,6 @@ class ESI():
 
         # Try request
         full_url = "%s%s?%s" % (self.url, full_url, self._get_variables(get_vars))
-        if debug:
-            print full_url
 
         # Check the cache for a response
         if self.token == None:
@@ -53,6 +51,9 @@ class ESI():
 
         # Nope, no cache, hit the API
         r = method(full_url, data=data, headers=self._bearer_header())
+
+        if debug:
+            print r.status_code, full_url
 
         # If we got a 403 error its an invalid token, try to refresh the token and try again
         if r.status_code == 403:
