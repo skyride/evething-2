@@ -76,9 +76,12 @@ class Station(models.Model):
                     # Update the structures name from the API
                     try:
                         r = api.get("/universe/structures/%s/" % station.id)
-                        station.name = r['name']
-                        station.system_id = r['solar_system_id']
-                        station.save()
+                        if r == None:
+                            station.save()
+                        else:
+                            station.name = r['name']
+                            station.system_id = r['solar_system_id']
+                            station.save()
                     except Exception:
                         # We failed to get it, probably because it's a structure
                         # this token no longer has docking rights for
