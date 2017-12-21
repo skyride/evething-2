@@ -134,7 +134,7 @@ class ESI_CharacterInfo(APITask):
             else:
                 db_skill = CharacterSkill(character=character, skill_id=skill['skill_id'])
 
-            db_skill.level = skill['current_skill_level']
+            db_skill.level = skill['trained_skill_level']
             db_skill.points = skill['skillpoints_in_skill']
             db_skill.save()
 
