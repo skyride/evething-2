@@ -229,8 +229,8 @@ class ESI_CharacterInfo(APITask):
         
         # Fetch names for all ships/containers
         items = list(Asset.objects.filter(
-            Q(item__itemgroup__category=6) | Q(item__itemgroup__in=[12 , 340, 448]),
-            character=character
+            Q(character=character),
+            Q(item__itemgroup__category=6) | Q(item__itemgroup__in=[12 , 340, 448])
         ).values_list(
             'asset_id',
             flat=True
