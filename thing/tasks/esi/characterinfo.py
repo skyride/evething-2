@@ -82,6 +82,7 @@ class ESI_CharacterInfo(APITask):
             for clone in clones['jump_clones']:
                 db_clone = Clone(
                     character=character,
+                    name=clone['name'] or "",
                     location=Station.get_or_create(clone['location_id'], self.api)
                 )
                 db_clone.save()
