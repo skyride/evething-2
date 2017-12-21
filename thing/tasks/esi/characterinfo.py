@@ -3,7 +3,7 @@ import json
 from datetime import datetime, timedelta
 
 from django import db
-from django.db.models import Sum, F, FloatField
+from django.db.models import Sum, F, FloatField, Q
 
 from .apitask import APITask
 from .mail_fetch_task import ESI_MailFetchTask
@@ -167,8 +167,6 @@ class ESI_CharacterInfo(APITask):
             else:
                 db_asset = Asset(character=character, asset_id=asset['item_id'], item_id=asset['type_id'])
 
-            # Names aren't in ESI atm for some reason
-            db_asset.name = ""
             db_asset.inv_flag_id = PersonalLocationFlagEnum[asset['location_flag']].value
 
             db_asset.singleton = asset['is_singleton']
@@ -228,6 +226,20 @@ class ESI_CharacterInfo(APITask):
 
         # Delete all assets not in the map
         Asset.objects.filter(character=character).exclude(asset_id__in=asset_map).delete()
+        
+        # Fetch names for all ships/containers
+        items = list(Asset.objects.filter(
+            Q(item__itemgroup__category=6) | Q(item__itemgroup__in=[12 , 340, 448]),
+            character=character
+        ).values_list(
+            'asset_id',
+            flat=True
+        ))
+        asset_names = self.api.post("/characters/$id/assets/names/", data=json.dumps(items))
+        for asset in asset_names:
+            db_asset = Asset.objects.get(asset_id=asset['item_id'])
+            db_asset.name = asset['name']
+            db_asset.save()
 
         # Rebuild asset summary
         AssetSummary.objects.filter(character=character).delete()
