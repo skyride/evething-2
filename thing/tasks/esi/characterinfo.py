@@ -82,9 +82,10 @@ class ESI_CharacterInfo(APITask):
             for clone in clones['jump_clones']:
                 db_clone = Clone(
                     character=character,
-                    name=clone['name'] or "",
                     location=Station.get_or_create(clone['location_id'], self.api)
                 )
+                if "name" in clone:
+                    db_clone.name = clone['name']
                 db_clone.save()
 
                 if "implants" in clone:
