@@ -228,7 +228,7 @@ class ESI_CharacterInfo(APITask):
         Asset.objects.filter(character=character).exclude(asset_id__in=asset_map).delete()
         
         # Fetch names for all ships/containers
-        items = list(Asset.objects.annotate.filter(
+        items = list(Asset.objects.filter(
             Q(character=character),
             Q(item__itemgroup_id=6) | Q(item__itemgroup__in=[12 , 340, 448])
         ).values_list(
