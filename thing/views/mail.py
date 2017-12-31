@@ -74,7 +74,7 @@ def character_search(request, query):
         return json_response([])
 
     data = json.dumps(r['character'][:20])
-    chars = api.post("/universe/names/", data=data, cache_time=600)
+    chars = api.post("/v2/universe/names/", data=data, cache_time=600)
     out = []
     for char in chars:
         out.append({
