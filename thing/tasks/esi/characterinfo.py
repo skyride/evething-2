@@ -228,7 +228,7 @@ class ESI_CharacterInfo(APITask):
 
         # Delete all assets not in the map
         Asset.objects.filter(character=character).exclude(asset_id__in=asset_map).delete()
-        
+
         # Fetch names for all ships/containers
         items = list(Asset.objects.filter(
             Q(character=character),
@@ -237,7 +237,7 @@ class ESI_CharacterInfo(APITask):
             'asset_id',
             flat=True
         ))
-        asset_names = self.api.post("/characters/$id/assets/names/", data=json.dumps(items))
+        asset_names = self.api.post("/v1/characters/$id/assets/names/", data=json.dumps(items))
         for asset in asset_names:
             db_asset = Asset.objects.get(asset_id=asset['item_id'])
             db_asset.name = asset['name']
