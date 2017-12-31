@@ -408,74 +408,77 @@ class ESI_CharacterInfo(APITask):
 
 
         ## PI
-        with db.transaction.atomic():
-            planets = self.api.get("/v1/characters/$id/planets/")
+        try:
+            with db.transaction.atomic():
+                planets = self.api.get("/v1/characters/$id/planets/")
 
-            # Delete colonies that no longer exist
-            planet_map = map(lambda x: x['planet_id'], planets)
-            Colony.objects.filter(character=character).exclude(planet_id__in=planet_map).delete()
+                # Delete colonies that no longer exist
+                planet_map = map(lambda x: x['planet_id'], planets)
+                Colony.objects.filter(character=character).exclude(planet_id__in=planet_map).delete()
 
-            for planet in planets:
-                db_planet = Colony.objects.filter(character=character, planet_id=planet['planet_id'])
-                if len(db_planet) == 1:
-                    db_planet = db_planet[0]
-                else:
-                    db_planet = Colony(
-                        character=character,
-                        system_id=planet['solar_system_id'],
-                        planet_id=planet['planet_id'],
-                        planet=self.api.get("/v1/universe/planets/%s/" % planet['planet_id'])['name'],
-                        planet_type=planet['planet_type'],
-                        last_update=self.parse_api_date(planet['last_update']),
-                        level=planet['upgrade_level'],
-                        pins=planet['num_pins']
-                    )
-                db_planet.save()
-
-                # Get planet details
-                details = self.api.get("/v3/characters/$id/planets/%s/" % planet['planet_id'])
-
-                # Delete the pins that no longer exist
-                pin_map = map(lambda x: x['pin_id'], details['pins'])
-                Pin.objects.filter(colony=db_planet).exclude(pin_id__in=pin_map).delete()
-
-                for pin in details['pins']:
-                    db_pin = Pin.objects.filter(pin_id=pin['pin_id'])
-                    if len(db_pin) == 1:
-                        db_pin = db_pin[0]
+                for planet in planets:
+                    db_planet = Colony.objects.filter(character=character, planet_id=planet['planet_id'])
+                    if len(db_planet) == 1:
+                        db_planet = db_planet[0]
                     else:
-                        db_pin = Pin(
-                            pin_id=pin['pin_id'],
-                            colony=db_planet,
-                            type_id=pin['type_id']
+                        db_planet = Colony(
+                            character=character,
+                            system_id=planet['solar_system_id'],
+                            planet_id=planet['planet_id'],
+                            planet=self.api.get("/v1/universe/planets/%s/" % planet['planet_id'])['name'],
+                            planet_type=planet['planet_type'],
+                            last_update=self.parse_api_date(planet['last_update']),
+                            level=planet['upgrade_level'],
+                            pins=planet['num_pins']
                         )
+                    db_planet.save()
 
-                    if "schematic_id" in pin:
-                        db_pin.schematic = pin['schematic_id']
-                    if "extractor_details" in pin:
-                        db_pin.cycle_time = pin['extractor_details']['cycle_time']
-                        db_pin.quantity_per_cycle = pin['extractor_details']['qty_per_cycle']
-                        db_pin.installed = self.parse_api_date(pin['install_time'])
-                        db_pin.expires = self.parse_api_date(pin['expiry_time'])
-                    if "contents" in pin:
-                        # Clear contents
-                        PinContent.objects.filter(pin=db_pin).delete()
+                    # Get planet details
+                    details = self.api.get("/v3/characters/$id/planets/%s/" % planet['planet_id'])
 
-                        # Add new contents
-                        contents = []
-                        for item in pin['contents']:
-                            content = PinContent(
-                                pin=db_pin,
-                                item_id=item['type_id'],
-                                quantity=item['amount']
+                    # Delete the pins that no longer exist
+                    pin_map = map(lambda x: x['pin_id'], details['pins'])
+                    Pin.objects.filter(colony=db_planet).exclude(pin_id__in=pin_map).delete()
+
+                    for pin in details['pins']:
+                        db_pin = Pin.objects.filter(pin_id=pin['pin_id'])
+                        if len(db_pin) == 1:
+                            db_pin = db_pin[0]
+                        else:
+                            db_pin = Pin(
+                                pin_id=pin['pin_id'],
+                                colony=db_planet,
+                                type_id=pin['type_id']
                             )
-                            contents.append(content)
-                            content.save()
 
-                        # Calculate content size
-                        db_pin.content_size = sum(map(lambda x: x.quantity * x.item.volume, contents))
+                        if "schematic_id" in pin:
+                            db_pin.schematic = pin['schematic_id']
+                        if "extractor_details" in pin:
+                            db_pin.cycle_time = pin['extractor_details']['cycle_time']
+                            db_pin.quantity_per_cycle = pin['extractor_details']['qty_per_cycle']
+                            db_pin.installed = self.parse_api_date(pin['install_time'])
+                            db_pin.expires = self.parse_api_date(pin['expiry_time'])
+                        if "contents" in pin:
+                            # Clear contents
+                            PinContent.objects.filter(pin=db_pin).delete()
 
-                    db_pin.save()
+                            # Add new contents
+                            contents = []
+                            for item in pin['contents']:
+                                content = PinContent(
+                                    pin=db_pin,
+                                    item_id=item['type_id'],
+                                    quantity=item['amount']
+                                )
+                                contents.append(content)
+                                content.save()
+
+                            # Calculate content size
+                            db_pin.content_size = sum(map(lambda x: x.quantity * x.item.volume, contents))
+
+                        db_pin.save()
+        except Exception:
+            pass
 
 
         ## Contracts
