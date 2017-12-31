@@ -18,7 +18,7 @@ class ESI_ServerStatus(APITask):
         else:
             db_status = ServerStatus.objects.all()[0]
 
-        status = self.api.get("/status/")
+        status = self.api.get("/v1/status/")
         if status != None:
             db_status.online = True
             db_status.players = status['players']

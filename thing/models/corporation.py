@@ -65,7 +65,7 @@ class Corporation(models.Model):
         corporation = Corporation.objects.filter(id=corporation_id)
         if len(corporation) == 0:
             api = ESI()
-            corporation = api.get("/corporations/%s/" % corporation_id)
+            corporation = api.get("/v4/corporations/%s/" % corporation_id)
             db_corporation = Corporation(
                 id=corporation_id,
                 name=corporation['corporation_name']
@@ -83,7 +83,7 @@ class Corporation(models.Model):
             db_corporation = corporation[0]
             if db_corporation.last_updated < datetime.now() - timedelta(days=2):
                 api = ESI()
-                corporation = api.get("/corporations/%s/" % corporation_id)
+                corporation = api.get("/v4/corporations/%s/" % corporation_id)
                 db_corporation.name = corporation['corporation_name']
 
                 if "alliance_id" in corporation:

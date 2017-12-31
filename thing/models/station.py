@@ -91,7 +91,7 @@ class Station(models.Model):
         try:
             # Check if its a sov station we don't have yet
             if id < 71001146:
-                r = api.get("/universe/stations/%s/" % id)
+                r = api.get("/v2/universe/stations/%s/" % id)
                 station = Station(
                     id=id,
                     name=r['name'],
@@ -100,7 +100,7 @@ class Station(models.Model):
                 )
             else:
                 # It doesn't exist, lets create it
-                r = api.get("/universe/structures/%s/" % id)
+                r = api.get("/v1/universe/structures/%s/" % id)
                 station = Station(
                     id=id,
                     structure=True

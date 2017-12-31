@@ -45,7 +45,7 @@ class Alliance(models.Model):
 
         db_alliance = Alliance.objects.filter(id=alliance_id)
         if len(db_alliance) == 0:
-            alliance = api.get("/alliances/%s/" % alliance_id)
+            alliance = api.get("/v3/alliances/%s/" % alliance_id)
             db_alliance = Alliance(
                 id=alliance_id,
                 name=alliance['alliance_name'],
@@ -57,9 +57,9 @@ class Alliance(models.Model):
         else:
             db_alliance = db_alliance[0]
             if db_alliance.last_updated < datetime.now() - timedelta(days=2):
-                alliance = api.get("/alliances/%s/" % alliance_id)
+                alliance = api.get("/v3/alliances/%s/" % alliance_id)
                 db_alliance.name = alliance['alliance_name']
                 db_alliance.short_name = alliance['ticker']
                 db_alliance.save()
-                
+
             return db_alliance

@@ -51,7 +51,7 @@ class Character(models.Model):
         db_char = Character.objects.filter(id=id)
         if len(db_char) == 0:
             api = ESI()
-            char = api.get("/characters/%s/" % id)
+            char = api.get("/v4/characters/%s/" % id)
             db_char = Character(
                 id=id,
                 name=char['name'],

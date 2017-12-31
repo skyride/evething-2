@@ -40,7 +40,7 @@ class ESI_MailFetchTask(APITask):
         else:
             to_list_id = to_list_id[0]['recipient_id']
 
-        body = self.api.get("/characters/$id/mail/%s/" % mail['mail_id'])
+        body = self.api.get("/v1/characters/$id/mail/%s/" % mail['mail_id'])
 
         try:
             Character.get_or_create(mail['from'])

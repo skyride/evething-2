@@ -23,7 +23,7 @@ class ESI_CharacterInfo(APITask):
 
         ## Character Data
         characterID = self.api.token.characterID
-        public = self.api.get("/characters/$id/")
+        public = self.api.get("/v4/characters/$id/")
 
         # Get or create character object
         try:
@@ -47,16 +47,16 @@ class ESI_CharacterInfo(APITask):
 
 
         # Perform the rest of the calls
-        location = self.api.get("/characters/$id/location/")
-        ship = self.api.get("/characters/$id/ship/")
-        wallet = self.api.get("/characters/$id/wallet/")
+        location = self.api.get("/v1/characters/$id/location/")
+        ship = self.api.get("/v1/characters/$id/ship/")
+        wallet = self.api.get("/v1/characters/$id/wallet/")
 
         # Populate the database
         charDetails.wallet_balance = float(wallet)
         charDetails.plex_balance = 0
 
         # Get character attributes
-        attributes = self.api.get("/characters/$id/attributes/")
+        attributes = self.api.get("/v1/characters/$id/attributes/")
         charDetails.cha_attribute = attributes['charisma']
         charDetails.int_attribute = attributes['intelligence']
         charDetails.mem_attribute = attributes['memory']
@@ -75,7 +75,7 @@ class ESI_CharacterInfo(APITask):
         self.api.token.character = character
         self.api.token.save()
 
-        clones = self.api.get("/characters/$id/clones/")
+        clones = self.api.get("/v3/characters/$id/clones/")
         # Delete existing clones
         Clone.objects.filter(character=character).delete()
         if "jump_clones" in clones:
@@ -95,7 +95,7 @@ class ESI_CharacterInfo(APITask):
                         db_implant.save()
 
         # Wallet Journal
-        journal = self.api.get("/characters/$id/wallet/journal/")
+        journal = self.api.get("/v3/characters/$id/wallet/journal/")
         for entry in journal:
             db_entry = JournalEntry.objects.filter(character=character, ref_id=entry['ref_id'])
             if len(db_entry) == 0:
@@ -126,7 +126,7 @@ class ESI_CharacterInfo(APITask):
 
 
         ## Skills
-        skills = self.api.get("/characters/$id/skills/")
+        skills = self.api.get("/v4/characters/$id/skills/")
         for skill in skills['skills']:
             db_skill = CharacterSkill.objects.filter(character=character, skill_id=skill['skill_id'])
             if len(db_skill) == 1:
@@ -138,7 +138,7 @@ class ESI_CharacterInfo(APITask):
             db_skill.points = skill['skillpoints_in_skill']
             db_skill.save()
 
-        queue = self.api.get("/characters/$id/skillqueue/")
+        queue = self.api.get("/v2/characters/$id/skillqueue/")
         # Remove all skills
         SkillQueue.objects.filter(character=character).delete()
         try:
@@ -157,7 +157,7 @@ class ESI_CharacterInfo(APITask):
 
 
         ## Assets
-        assets = self.api.get("/characters/$id/assets/")
+        assets = self.api.get("/v3/characters/$id/assets/")
         asset_map = map(lambda x: x['item_id'], assets)
 
         for asset in assets:
@@ -260,7 +260,7 @@ class ESI_CharacterInfo(APITask):
 
 
         ## Standings
-        standings = self.api.get("/characters/$id/standings/")
+        standings = self.api.get("/v1/characters/$id/standings/")
         factions = filter(lambda x: x['from_type'] == "faction", standings)
         for faction in factions:
             factionstanding = FactionStanding.objects.filter(character=character, faction_id=faction['from_id'])
@@ -285,7 +285,7 @@ class ESI_CharacterInfo(APITask):
 
 
         ## Industry
-        jobs = self.api.get("/characters/$id/industry/jobs/")
+        jobs = self.api.get("/v1/characters/$id/industry/jobs/")
         for job in jobs:
             db_job = IndustryJob.objects.filter(job_id=job['job_id'])
             if len(db_job) == 1:
@@ -338,7 +338,7 @@ class ESI_CharacterInfo(APITask):
             job.save()
 
         ## Orders
-        orders = self.api.get("/characters/$id/orders/")
+        orders = self.api.get("/v1/characters/$id/orders/")
 
         # Delete orders if they no longer exist
         order_map = map(lambda x: x['order_id'], orders)
@@ -371,7 +371,7 @@ class ESI_CharacterInfo(APITask):
 
 
         ## Mails
-        mails = self.api.get("/characters/$id/mail/")
+        mails = self.api.get("/v1/characters/$id/mail/")
 
         # Filter out mails we already have
         if mails is not None:
@@ -386,7 +386,7 @@ class ESI_CharacterInfo(APITask):
 
 
         ## PI
-        planets = self.api.get("/characters/$id/planets/")
+        planets = self.api.get("/v1/characters/$id/planets/")
 
         # Delete colonies that no longer exist
         planet_map = map(lambda x: x['planet_id'], planets)
@@ -401,7 +401,7 @@ class ESI_CharacterInfo(APITask):
                     character=character,
                     system_id=planet['solar_system_id'],
                     planet_id=planet['planet_id'],
-                    planet=self.api.get("/universe/planets/%s/" % planet['planet_id'])['name'],
+                    planet=self.api.get("/v1/universe/planets/%s/" % planet['planet_id'])['name'],
                     planet_type=planet['planet_type'],
                     last_update=self.parse_api_date(planet['last_update']),
                     level=planet['upgrade_level'],
@@ -410,7 +410,7 @@ class ESI_CharacterInfo(APITask):
             db_planet.save()
 
             # Get planet details
-            details = self.api.get("/characters/$id/planets/%s/" % planet['planet_id'])
+            details = self.api.get("/v3/characters/$id/planets/%s/" % planet['planet_id'])
 
             # Delete the pins that no longer exist
             pin_map = map(lambda x: x['pin_id'], details['pins'])
@@ -457,7 +457,7 @@ class ESI_CharacterInfo(APITask):
 
         ## Contracts
         try:
-            contracts = self.api.get("/characters/$id/contracts/")
+            contracts = self.api.get("/v1/characters/$id/contracts/")
 
             for contract in contracts:
                 db_contract = Contract.objects.filter(contract_id=contract['contract_id'])
@@ -505,7 +505,7 @@ class ESI_CharacterInfo(APITask):
 
                 # Items
                 if not db_contract.retrieved_items:
-                    items = self.api.get("/characters/$id/contracts/%s/items" % contract['contract_id'])
+                    items = self.api.get("/v1/characters/$id/contracts/%s/items" % contract['contract_id'])
                     for item in items:
                         db_item = ContractItem(
                             id=item['record_id'],
@@ -528,7 +528,7 @@ class ESI_CharacterInfo(APITask):
 
         ## Fatigue
         try:
-            fatigue = self.api.get("/characters/$id/fatigue/")
+            fatigue = self.api.get("/v1/characters/$id/fatigue/")
 
             charDetails.last_jump_date = self.parse_api_date(fatigue['last_jump_date'])
             charDetails.fatigue_expire_date = self.parse_api_date(fatigue['jump_fatigue_expire_date'])
@@ -540,7 +540,7 @@ class ESI_CharacterInfo(APITask):
 
         ## Implants
         try:
-            implants = self.api.get("/characters/$id/implants/")
+            implants = self.api.get("/v1/characters/$id/implants/")
 
             charDetails.implants.clear()
             for implant in implants:

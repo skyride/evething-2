@@ -68,7 +68,7 @@ def character_search(request, query):
         "categories": "character",
         "strict": "false"
     }
-    r = api.get("/search/", get_vars=data, cache_time=600)
+    r = api.get("/v2/search/", get_vars=data, cache_time=600)
 
     if "character" not in r:
         return json_response([])

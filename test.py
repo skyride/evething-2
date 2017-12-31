@@ -4,7 +4,7 @@ from thing.esi import ESI
 from thing.models import *
 from thing.tasks.esi import *
 
-token = ESIToken.objects.get(name="Capri Sun KraftFoods")
+token = ESIToken.objects.get(name__startswith="Steve Irwin")
 api = ESI(token)
 #api._refresh_access_token()
 #print api.get("/characters/93417038/assets/")
