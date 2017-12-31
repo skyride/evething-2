@@ -99,6 +99,7 @@ def assets_summary(request):
     tt.add_time('init')
 
     summary_qs = AssetSummary.objects.filter(
+        Q(system__isnull=False),
         Q(character__in=character_ids, corporation_id=0)
         |
         Q(corporation_id__in=corporation_ids)
