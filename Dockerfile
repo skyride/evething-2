@@ -5,12 +5,13 @@ MAINTAINER Adam Findlay "skylinerspeeder@gmail.com"
 
 # Set up environment
 WORKDIR /app
-RUN apk add --no-cache build-base python-dev mariadb-dev postgresql-dev libffi-dev
-RUN pip install --no-cache-dir psycopg2 gunicorn wget
+RUN apk add --no-cache build-base python-dev mariadb-dev postgresql-dev libffi-dev wget curl
+RUN pip install --no-cache-dir psycopg2 gunicorn
 
 # Download and extract sde
-RUN wget https://www.fuzzwork.co.uk/dump/sqlite-latest.sqlite.bz2
-RUN bzip2 -v -d sqlite-latest.sqlite.bz2
+#RUN wget https://www.fuzzwork.co.uk/dump/sqlite-latest.sqlite.bz2
+#RUN wget https://www.fuzzwork.co.uk/dump/sqlite-latest.sqlite.bz2.md5
+#RUN bzip2 -v -d sqlite-latest.sqlite.bz2
 
 COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
@@ -21,7 +22,7 @@ RUN cp evething/local_settings.docker.py evething/local_settings.py
 ENV DB_ENGINE=mysql
 ENV DB_NAME=evething2
 ENV DB_USER=evething2
-ENV DB_PASSWORD=potato
+ENV DB_PASSWORD=evething2
 ENV DB_HOST=127.0.0.1
 ENV DB_PORT=3306
 
@@ -36,4 +37,4 @@ ENV REDIS_KEY_PREFIX=evething2_
 
 EXPOSE 8000
 
-CMD "gunicorn" "-b 0.0.0.0:8000" "evething.wsgi:application"
+ENTRYPOINT "init.sh && gunicorn -b 0.0.0.0:8000 evething.wsgi:application"

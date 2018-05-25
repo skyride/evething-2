@@ -1,5 +1,6 @@
 # make a copy of this file as local_settings.py and edit that
 import settings
+import os
 
 # switch this to True if you want to see crash information
 # NEVER LEAVE THIS ON FOR A PUBLIC SITE

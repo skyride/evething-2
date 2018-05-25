@@ -1,0 +1,53 @@
+version: "3.2"
+
+services:
+
+  mysql:
+    image: mysql:5.7
+    container_name: evething2-mysql
+    restart: always
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_USER: evething2
+      MYSQL_PASSWORD: hunter2
+      MYSQL_DATABASE: evething2
+    volumes:
+      - "mysql-data:/var/lib/mysql"
+    networks:
+      - evething2-network
+
+  redis:
+    image: redis:alpine
+    container_name: evething2-redis
+    command: redis-server --appendonly yes
+    restart: always
+    volumes:
+      - "redis-data:/data"
+    networks:
+      - evething2-network
+
+  app:
+    image: evething2:latest
+    container_name: evething2-app
+    environment:
+      DB_HOST: evething2-mysql
+      REDIS_URL: redis://evething2-redis/0
+      ESI_CLIENT_ID: 98b1c11875b0475cb97c84336766ae48
+      ESI_SECRET_KEY: F9l0IcaKBBjiqUovieKSezwSlEBZftJc9aYDbUBg
+      ESI_CALLBACK_URL: http://127.0.0.1/account/sso/callback
+    volumes:
+      - "static:/static"
+    depends_on:
+      - mysql
+      - redis
+    ports:
+      - "8000:8000"
+
+
+volumes:
+  mysql-data:
+  redis-data:
+  static:
+
+networks:
+  evething2-network:
