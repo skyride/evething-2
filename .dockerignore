@@ -6,3 +6,4 @@ celerybeat.pid
 static-dist
 node_modules
 skill_map.pickle
+evething/local_settings.py

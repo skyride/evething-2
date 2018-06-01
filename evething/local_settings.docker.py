@@ -4,11 +4,11 @@ import os
 
 # switch this to True if you want to see crash information
 # NEVER LEAVE THIS ON FOR A PUBLIC SITE
-DEBUG = False
+DEBUG = True
 
 # If you keep DEBUG set to False you will need to set allowed hosts correctly.
 # https://docs.djangoproject.com/en/1.5/ref/settings/#std%3asetting-ALLOWED_HOSTS
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # this is used for a few random things, it's a pretty good idea to change it
 # http://www.miniwebtool.com/django-secret-key-generator/
@@ -22,17 +22,19 @@ ADMINS = (
 # database configuration
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.%s' % os.environ.get("DB_ENGINE"),
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ.get("DB_NAME"),
         'USER': os.environ.get("DB_USER"),
-        'PASSWORD': os.environ.get("DB_PASSWORD"),
         'HOST': os.environ.get("DB_HOST"),
-        'PORT': os.environ.get("DB_PORT"),
+        'PASSWORD': os.environ.get("DB_PASSWORD")
     },
     # this database should contain a current version of the Static Data Export
     'import': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'sqlite-latest.sqlite',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': "sde",
+        'USER': os.environ.get("DB_USER"),
+        'HOST': os.environ.get("DB_HOST"),
+        'PASSWORD': os.environ.get("DB_PASSWORD")
     },
 }
 
@@ -55,9 +57,9 @@ ESI_URL = os.environ.get("ESI_URL")
 ESI_UPDATE_INTERVAL = 60  # How often to update in minutes
 ESI_RETRIES = 15
 ESI_DATASOURCE = "tranquility"
-ESI_CLIENT_ID = ''
-ESI_SECRET_KEY = ''
-ESI_CALLBACK_URL = os.environ.get("ESI_CALLBACK_URL")
+ESI_CLIENT_ID = os.environ.get("ESI_CLIENT_ID", "")
+ESI_SECRET_KEY = os.environ.get("ESI_SECRET_KEY", "")
+ESI_CALLBACK_URL = os.environ.get("ESI_CALLBACK_URL", "")
 
 # IP addresses that will see some extra DEBUG info
 INTERNAL_IPS = (
@@ -82,7 +84,7 @@ STAGGER_APITASK_STARTUP = True
 PRICE_URL = 'http://goonmetrics.com/api/price_data/?station_id=60003760&type_id=%s'
 
 # Celery broker URL - http://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#choosing-a-broker
-BROKER_URL = 'amqp://guest:guest@localhost:5672/'
+BROKER_URL = os.environ.get("REDIS_URL", "redis://redis:6379/0"),
 
 # Cache for various things. You really want to use memcache if at all
 # possible, other caches do not guarantee atomic increments.
@@ -91,7 +93,7 @@ BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': os.environ.get("REDIS_URL"),
+        'LOCATION': os.environ.get("REDIS_URL", "redis://redis:6379/0"),
         'KEY_PREFIX': 'evething2_',
     }
 }
