@@ -100,14 +100,14 @@ class ESI_CharacterInfo(APITask):
 
         # Wallet Journal
         with db.transaction.atomic():
-            journal = self.api.get("/v3/characters/$id/wallet/journal/")
+            journal = self.api.get("/v4/characters/$id/wallet/journal/")
             for entry in journal:
-                db_entry = JournalEntry.objects.filter(character=character, ref_id=entry['ref_id'])
+                db_entry = JournalEntry.objects.filter(character=character, ref_id=entry['id'])
                 if len(db_entry) == 0:
                     db_entry = JournalEntry(
                         character=character,
                         date=self.parse_api_date(entry['date']),
-                        ref_id=entry['ref_id'],
+                        ref_id=entry['id'],
                         ref_type=entry['ref_type']
                     )
 
