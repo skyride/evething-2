@@ -264,6 +264,15 @@ CELERYBEAT_SCHEDULE = {
         'options': {
             'queue': 'et_high'
         }
+    },
+
+    # Clear dead tokens
+    'esi_clear_invalid_tokens': {
+        'task': 'thing.esi.clear_invalid_keys',
+        'schedule': timedelta(days=1),
+        'options': {
+            'queue': 'et_high'
+        }
     }
 
     # OLD XML API TASKS
