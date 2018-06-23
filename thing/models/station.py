@@ -72,7 +72,7 @@ class Station(models.Model):
             if not station.structure:
                 return station
             else:
-                if station.lastupdated < datetime.now() - timedelta(days=2):
+                if station.lastupdated < datetime.now() - timedelta(days=14):
                     # Update the structures name from the API
                     r = api.get("/v1/universe/structures/%s/" % station.id)
                     if r is not None:
