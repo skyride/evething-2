@@ -22,6 +22,7 @@ class ESI_ClearInvalidTokens(APITask):
         for token in tokens:
             api = ESI(token)
             if not api._refresh_access_token():
+                print "Deleting token for %s" % token.character.name
                 token.delete()
                 deleted = deleted + 1
         print "Cleared %s ESI tokens" % deleted
