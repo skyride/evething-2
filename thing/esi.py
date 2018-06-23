@@ -118,7 +118,7 @@ class ESI():
 
 
     # Refreshes the access token using the refresh token
-    def _refresh_access_token(self):
+    def _refresh_access_token(self, save=True):
         # Get the new access token
         auth = b64encode("%s:%s" % (self.client_id, self.secret_key))
         headers = {
@@ -130,15 +130,10 @@ class ESI():
         }
         r = requests.post("https://login.eveonline.com/oauth/token", data=data, headers=headers)
 
-        # If we get a 400 code, then the key has been deleted
-        if r.status_code == 400:
-            self.token.status = False
+        if save:
+            # Update the ESI token
+            r = json.loads(r.text)
+            self.token.access_token = r['access_token']
             self.token.save()
-            return False
-
-        # Update the ESI token
-        r = json.loads(r.text)
-        self.token.access_token = r['access_token']
-        self.token.save()
 
         return True
